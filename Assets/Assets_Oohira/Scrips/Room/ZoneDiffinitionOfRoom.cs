@@ -39,7 +39,13 @@ public class ZoneDiffinitionOfRoom : MonoBehaviour
 
     private void Awake()
     {
-        //StartCoroutine(Init());
+        StartCoroutine(Init());
+    }
+
+
+    private IEnumerator Init()
+    {
+        yield return new WaitUntil(() => RoomDoorWay.instance.Ready());
         if (useCustomWalls)
         {
             SetWalls();
@@ -62,6 +68,7 @@ public class ZoneDiffinitionOfRoom : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (!RoomDoorWay.instance.Ready()) return;
         //Observation();
         Edit();
     }
@@ -88,7 +95,7 @@ public class ZoneDiffinitionOfRoom : MonoBehaviour
 
         Ray rayX0 = new Ray(transform.position, -(roomPivot_X.transform.position - transform.position));
         Debug.DrawRay(rayX0.origin, rayX0.direction * distance, Color.red, duration, false);
-        Physics.Raycast(rayX0, out RaycastHit hitInfoX0, 300, layerMask_Room); 
+        Physics.Raycast(rayX0, out RaycastHit hitInfoX0, 300, layerMask_Room);
 
         Ray rayX1 = new Ray(transform.position, roomPivot_X.transform.position - transform.position);
         Debug.DrawRay(rayX1.origin, rayX1.direction * distance, Color.red, duration, false);
@@ -122,14 +129,14 @@ public class ZoneDiffinitionOfRoom : MonoBehaviour
         //colliderMaterialsPosition_Y1 = hitInfoY1.point;
         //colliderMaterialsPosition_Z0 = hitInfoZ0.point;
         //colliderMaterialsPosition_Z1 = hitInfoZ1.point;
-        
+
         colliderMaterialsPosition_X0 = hitInfoX0.point;
         colliderMaterialsPosition_X1 = hitInfoX1.point;
         colliderMaterialsPosition_Y0 = hitInfoY0.point;
         colliderMaterialsPosition_Y1 = hitInfoY1.point;
         colliderMaterialsPosition_Z0 = hitInfoZ0.point;
         colliderMaterialsPosition_Z1 = hitInfoZ1.point;
-        
+
         colliderMaterialsWidth = roomWidth + margin;
         colliderMaterialsHeight = roomHeight + margin;
         colliderMaterialsLength = roomLength + margin;

@@ -66,7 +66,7 @@ public class GameManager : MonoBehaviour
     private IEnumerator InitScene_Game()
     {
         roomDoorWay.Join();
-        yield return new WaitForSeconds(5f);
+        yield return new WaitUntil(() => RoomDoorWay.instance.Ready());
         inGameScene = true;
         text_Score_Player0 = GameObject.Find("Score_Player0").GetComponent<TextMeshProUGUI>();
         text_Score_Player1 = GameObject.Find("Score_Player1").GetComponent<TextMeshProUGUI>();

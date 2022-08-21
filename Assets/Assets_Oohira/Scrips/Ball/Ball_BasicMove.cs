@@ -4,7 +4,7 @@ using UnityEngine;
 using System.Linq;
 using Photon.Pun;
 
-public class Ball_BasicMove : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
+public class Ball_BasicMove : MonoBehaviourPunCallbacks//, IPunInstantiateMagicCallback
 {
     //ã§í ****************************************
     private DifineRackets rackets = null;
@@ -587,11 +587,11 @@ public class Ball_BasicMove : MonoBehaviourPunCallbacks, IPunInstantiateMagicCal
         rec = true;
     }
 
-    void IPunInstantiateMagicCallback.OnPhotonInstantiate(PhotonMessageInfo info)
-    {
-        Debug.Log("çÏÇÁÇÍÇΩ1");
-        photonManager = GameObject.FindGameObjectWithTag("Photon").GetComponent<PhotonManager>();
-        photonManager.ball = gameObject;
-        Debug.Log("çÏÇÁÇÍÇΩ2");
-    }
+    //void IPunInstantiateMagicCallback.OnPhotonInstantiate(PhotonMessageInfo info)
+    //{
+    //    Debug.Log("çÏÇÁÇÍÇΩ1");
+    //    photonManager = GameObject.FindGameObjectWithTag("Photon").GetComponent<PhotonManager>();
+    //    photonManager.ball = gameObject;
+    //    Debug.Log("çÏÇÁÇÍÇΩ2");
+    //}
 }

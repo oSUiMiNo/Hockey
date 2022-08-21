@@ -789,6 +789,7 @@ MonoBehaviour:
   ready: 0
   avatar0: {fileID: 0}
   avatar1: {fileID: 0}
+  hockeySet: {fileID: 0}
 --- !u!114 &1463363007
 MonoBehaviour:
   m_ObjectHideFlags: 0

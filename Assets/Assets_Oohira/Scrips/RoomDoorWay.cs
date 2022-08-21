@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
@@ -111,37 +113,7 @@ public class RoomDoorWay : MonoBehaviourPunCallbacks
             if (randomNumber == 0) SetMasterColor(true);
             else SetMasterColor(false);
 
-            //    GetMasterColor(); if (!gotMasterColor) return;
-            //    if (GetMasterColor())
-            //    {
-            //        Debug.Log("マスターの色は白 OnJoinedRoom");
-            //        avatar0 = PhotonNetwork.Instantiate("Avatar0", new Vector3(0f, 5f, -80f), Quaternion.identity);
-
-            //        Debug.Log(avatar0);
-            //        avatar0.GetComponent<Avatar>().photonView.RPC(nameof(LockAction), RpcTarget.All);
-            //    }
-            //    else
-            //    {
-            //        Debug.Log("マスターの色は黒 OnJoinedRoom");
-            //        avatar1 = PhotonNetwork.Instantiate("Avatar1", new Vector3(0f, 5f, 80f), Quaternion.identity);
-
-            //        Debug.Log(avatar1);
-            //        avatar1.GetComponent<Avatar>().photonView.RPC(nameof(LockAction), RpcTarget.All);
-            //    }
-            //}
-            //else
-            //{
-            //    GetMasterColor(); if (!gotMasterColor) return;
-            //    if (GetMasterColor())
-            //    {
-            //        Debug.Log("自分の色は黒 OnJoinedRoom");
-            //        avatar1 = PhotonNetwork.Instantiate("Avatar1", new Vector3(0f, 5f, 80f), Quaternion.identity);
-            //    }
-            //    else
-            //    {
-            //        Debug.Log("自分の色は白 OnJoinedRoom");
-            //        avatar0 = PhotonNetwork.Instantiate("Avatar0", new Vector3(0f, 5f, -80f), Quaternion.identity);
-            //    }
+            StartCoroutine(CreateAvatar());
         }
     }
 
@@ -175,32 +147,28 @@ public class RoomDoorWay : MonoBehaviourPunCallbacks
         gameManager.Load_Menu();
     }
 
-
-
-    public override void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)
+    private IEnumerator CreateAvatar()
     {
-        Debug.Log(GetMasterColor());
-        if (!gotMasterColor) return;
-        gotMasterColor = false;
+        yield return new WaitUntil(() => creatable);
         //Debug.Log("マスターが白かどうか " + GetMasterColor());
-        if (PhotonNetwork.IsMasterClient )
+        if (PhotonNetwork.IsMasterClient)
         {
             Debug.Log("生成1");
-            if (avatar0 || avatar1) return;
+            if (avatar0 || avatar1) yield return null;
             Debug.Log("生成2");
             if (GetMasterColor())
             {
                 Debug.Log("マスターの色は白 OnRoomPropertiesUpdate");
                 PhotonNetwork.Instantiate("Avatar0", new Vector3(0f, 5f, -80f), Quaternion.identity);
-                
+
                 Debug.Log(avatar0);
                 //avatar0.GetComponent<Avatar>().photonView.RPC(nameof(LockAction), RpcTarget.All);
             }
             else
             {
                 Debug.Log("マスターの色は黒 OnRoomPropertiesUpdate");
-                PhotonNetwork.Instantiate("Avatar1", new Vector3(0f, 5f, 80f), Quaternion.identity);
-                
+                PhotonNetwork.Instantiate("Avatar1", new Vector3(0f, 5f, 80f), Quaternion.Euler(0, 180, 0));
+
                 Debug.Log(avatar1);
                 //avatar1.GetComponent<Avatar>().photonView.RPC(nameof(LockAction), RpcTarget.All);
             }
@@ -210,7 +178,7 @@ public class RoomDoorWay : MonoBehaviourPunCallbacks
             if (GetMasterColor())
             {
                 Debug.Log("自分の色は黒 OnRoomPropertiesUpdate");
-                PhotonNetwork.Instantiate("Avatar1", new Vector3(0f, 5f, 80f), Quaternion.identity);
+                PhotonNetwork.Instantiate("Avatar1", new Vector3(0f, 5f, 80f), Quaternion.Euler(0, 180, 0));
             }
             else
             {
@@ -220,8 +188,16 @@ public class RoomDoorWay : MonoBehaviourPunCallbacks
         }
 
         //PhotonNetwork.InstantiateRoomObject("Ball", Vector3.zero, Quaternion.identity);
-        PhotonNetwork.InstantiateRoomObject("HokkeySet", new Vector3(5, 5, 5), Quaternion.identity);
+        PhotonNetwork.InstantiateRoomObject("Ball", Vector3.zero, Quaternion.identity);
+    }
 
+
+    private bool creatable = false;
+    public override void OnRoomPropertiesUpdate(ExitGames.Client.Photon.Hashtable propertiesThatChanged)
+    {
+        Debug.Log(GetMasterColor());
+        if (!gotMasterColor) return;
+        creatable = true;
         gotMasterColor = false;
     }
 
@@ -260,7 +236,7 @@ public class RoomDoorWay : MonoBehaviourPunCallbacks
         }
     }
 
-    private static Hashtable prop = new Hashtable();
+    private static ExitGames.Client.Photon.Hashtable prop = new ExitGames.Client.Photon.Hashtable();
     private static bool gotMasterColor = false;
     public static void SetMasterColor(bool isMaster)
     {
