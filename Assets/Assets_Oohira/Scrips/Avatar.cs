@@ -53,11 +53,55 @@ public class Avatar : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
 
     public override void OnRoomPropertiesUpdate(ExitGames.Client.Photon.Hashtable propertiesThatChanged)
     {
+        GetThis();
+        Debug.Log(propertiesThatChanged);
+        Debug.Log("プレイヤー追加1");
+        Debug.Log(playerWasSet);
         if (!playerWasSet) return;
-        
+
+        Debug.Log("プレイヤー追加2");
         if (PhotonNetwork.IsMasterClient)
         {
-            if(gameObject.name == "Avatar0(Clone)")
+            if (gameObject.name == "Avatar0(Clone)")
+            {
+                Debug.Log("player0追加");
+                roomDoorWay.avatar0 = GetThis();
+            }
+            else
+            {
+                Debug.Log("player1追加");
+                roomDoorWay.avatar1 = GetThis();
+            }
+        }
+        else
+        {
+            if (gameObject.name == "Avatar0(Clone)")
+            {
+                Debug.Log("player0追加");
+                roomDoorWay.avatar0 = GetThis();
+            }
+            else
+            {
+                Debug.Log("player1追加");
+                roomDoorWay.avatar1 = GetThis();
+            }
+        }
+
+        playerWasSet = false;
+        //photonView.RPC(nameof(AddThis), RpcTarget.All);
+    }
+
+    [PunRPC]
+    private void AddThis()
+    {
+        Debug.Log("プレイヤー追加1");
+        Debug.Log(playerWasSet);
+        if (!playerWasSet) return;
+
+        Debug.Log("プレイヤー追加2");
+        if (PhotonNetwork.IsMasterClient)
+        {
+            if (gameObject.name == "Avatar0(Clone)")
             {
                 Debug.Log("player0追加");
                 roomDoorWay.avatar0 = GetThis();
@@ -84,6 +128,8 @@ public class Avatar : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
 
         playerWasSet = false;
     }
+
+
     private static ExitGames.Client.Photon.Hashtable prop = new ExitGames.Client.Photon.Hashtable();
     [SerializeField] private static bool playerWasSet = false;
     public static void SetThis(GameObject player)
