@@ -18,14 +18,11 @@ public class Avatar : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
 
     private void Start()
     {
-        //StartCoroutine(Init());
-        gageImage = GameObject.Find("Gage1").GetComponent<Image>();
-        rackets = GameObject.Find("RoomCore").GetComponent<DifineRackets>();
-        rackets.Init();
+        StartCoroutine(Init());
     }
     private IEnumerator Init()
     {
-        yield return new WaitWhile(() => RoomDoorWay.instance.Ready());
+        yield return new WaitUntil(() => RoomDoorWay.instance.Ready());
         gageImage = GameObject.Find("Gage1").GetComponent<Image>();
         rackets = GameObject.Find("RoomCore").GetComponent<DifineRackets>();
         rackets.Init();

@@ -31,11 +31,6 @@ public class RoomDoorWay : MonoBehaviourPunCallbacks
     public GameObject hockeySet = null;
 
 
-    //public override void OnEnable()
-    //{
-    //    gameManager = GameManager.instance;
-    //    Random.InitState(System.DateTime.Now.Millisecond);
-    //}
     private void Start()
     {
         gameManager = GameManager.instance;
@@ -185,6 +180,8 @@ public class RoomDoorWay : MonoBehaviourPunCallbacks
     public override void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)
     {
         Debug.Log(GetMasterColor());
+        if (!gotMasterColor) return;
+        gotMasterColor = false;
         //Debug.Log("マスターが白かどうか " + GetMasterColor());
         if (PhotonNetwork.IsMasterClient )
         {
@@ -224,6 +221,8 @@ public class RoomDoorWay : MonoBehaviourPunCallbacks
 
         //PhotonNetwork.InstantiateRoomObject("Ball", Vector3.zero, Quaternion.identity);
         PhotonNetwork.InstantiateRoomObject("HokkeySet", new Vector3(5, 5, 5), Quaternion.identity);
+
+        gotMasterColor = false;
     }
 
 

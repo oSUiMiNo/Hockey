@@ -16,7 +16,7 @@ public class Goal_Move : MonoBehaviour
     }
     private IEnumerator Init()
     {
-        yield return new WaitWhile(() => RoomDoorWay.instance.Ready());
+        yield return new WaitUntil(() => RoomDoorWay.instance.Ready());
         rb = GetComponent<Rigidbody>();
         zone = GameObject.Find("RoomCore").GetComponent<ZoneDiffinitionOfRoom>();
         rb.velocity = new Vector3(1, 0, 0) * speed_Move;
@@ -24,6 +24,7 @@ public class Goal_Move : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (!RoomDoorWay.instance.Ready()) return;
         coordinate_Goal = zone.CoordinateFromPosition(transform.position);
         Move();
     }

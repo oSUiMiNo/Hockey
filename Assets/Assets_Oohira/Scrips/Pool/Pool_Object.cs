@@ -12,17 +12,12 @@ public abstract class Pool_Object : MonoBehaviour
 
     public void Start()
     {
-        //StartCoroutine(Init());
-        Pool = new List<GameObject>();
-        Define_Object();
-        Define_Quantity();
-        Define_HideTime();
-        Pool_Initialize();
+        StartCoroutine(Init());
     }
 
     private IEnumerator Init()
     {
-        yield return new WaitWhile(() => RoomDoorWay.instance.Ready());
+        yield return new WaitUntil(() => RoomDoorWay.instance.Ready());
         Pool = new List<GameObject>();
         Define_Object();
         Define_Quantity();

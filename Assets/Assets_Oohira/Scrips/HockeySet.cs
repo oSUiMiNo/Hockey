@@ -8,11 +8,11 @@ public class HockeySet : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
 {
     private void Start()
     {
-        //StartCoroutine(Init());
+        StartCoroutine(Init());
     }
     private IEnumerator Init()
     {
-        yield return new WaitWhile(() => RoomDoorWay.instance.Ready());
+        yield return new WaitUntil(() => RoomDoorWay.instance.Ready());
     }
 
     public void OnPhotonInstantiate(PhotonMessageInfo info)

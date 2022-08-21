@@ -13,7 +13,7 @@ public class Bullet : MonoBehaviour
     }
     private IEnumerator Init()
     {
-        yield return new WaitWhile(() => RoomDoorWay.instance.Ready());
+        yield return new WaitUntil(() => RoomDoorWay.instance.Ready());
         pool_Bullet = GameObject.FindGameObjectWithTag("Pool").GetComponent<Pool_Bullet>();
         zone = GameObject.Find("RoomCore").GetComponent<ZoneDiffinitionOfRoom>();
     }
@@ -21,6 +21,7 @@ public class Bullet : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (!RoomDoorWay.instance.Ready()) return;
         coordinate_Bullet = zone.CoordinateFromPosition(transform.position);
         CollectBullet();
     }

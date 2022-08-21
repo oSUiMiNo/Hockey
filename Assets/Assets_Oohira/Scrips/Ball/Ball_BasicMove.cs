@@ -89,7 +89,7 @@ public class Ball_BasicMove : MonoBehaviourPunCallbacks, IPunInstantiateMagicCal
     }
     private IEnumerator Init()
     {
-        yield return new WaitWhile(() => RoomDoorWay.instance.Ready());
+        yield return new WaitUntil(() => RoomDoorWay.instance.Ready());
 
         A_Init();
         Components();
@@ -116,31 +116,12 @@ public class Ball_BasicMove : MonoBehaviourPunCallbacks, IPunInstantiateMagicCal
 
     private void Start()
     {
-        //StartCoroutine(Init()); 
-        A_Init();
-        Components();
-
-        // isTrigger=false で使用する場合はContinuous Dynamicsに設定
-        if (!col.isTrigger && rb.collisionDetectionMode != CollisionDetectionMode.ContinuousDynamic)
-        {
-            rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
-        }
-
-        //Rigidbodyの重力の使用禁止
-        if (rb.useGravity)
-        {
-            rb.useGravity = false;
-        }
-        contactOffset = Physics.defaultContactOffset;
-        canKeepSpeed = true;
-        canChange_CanStrike = true;
-        wasStruck_ByPlayer0 = new bool[2] { false, false };
-        wasStruck_ByPlayer1 = new bool[2] { false, false };
-        record = new Vector3[recVolume];
+        StartCoroutine(Init());
     }
 
     private void FixedUpdate()
     {
+        if (!RoomDoorWay.instance.Ready()) return;
         //if (photonManager.player0 == null) return;
         if (!RoomDoorWay.instance.avatar0 || !RoomDoorWay.instance.avatar1) return;
         if (rackets.racket0_Core == null || rackets.racket1_Core == null) return;
