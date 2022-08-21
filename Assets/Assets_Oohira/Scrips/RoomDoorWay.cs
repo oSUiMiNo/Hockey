@@ -31,16 +31,16 @@ public class RoomDoorWay : MonoBehaviourPunCallbacks
     public GameObject hockeySet = null;
 
 
-    public override void OnEnable()
-    {
-        gameManager = GameManager.instance;
-        Random.InitState(System.DateTime.Now.Millisecond);
-    }
-    //private void Start()
+    //public override void OnEnable()
     //{
     //    gameManager = GameManager.instance;
     //    Random.InitState(System.DateTime.Now.Millisecond);
     //}
+    private void Start()
+    {
+        gameManager = GameManager.instance;
+        Random.InitState(System.DateTime.Now.Millisecond);
+    }
 
     public void ConnectToMasterServer()
     {
