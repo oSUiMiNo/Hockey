@@ -2118,7 +2118,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2127461117245193148}
   - component: {fileID: 2127461117245193146}
-  - component: {fileID: 2127461117245193147}
   - component: {fileID: 2127461117245193151}
   - component: {fileID: 2127461117245193150}
   - component: {fileID: 2127461117245193149}
@@ -2158,22 +2157,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: 0
---- !u!114 &2127461117245193147
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2127461117245192771}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 38e6ec4dd5faedf4abe8324814641830, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  charge: 0
-  gageImage: {fileID: 0}
-  photonManager: {fileID: 0}
-  rackets: {fileID: 0}
 --- !u!114 &2127461117245193151
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3964,6 +3947,8 @@ MonoBehaviour:
   gageImage: {fileID: 0}
   photonManager: {fileID: 0}
   rackets: {fileID: 0}
+  roomCore: {fileID: 1279548332610788703, guid: f48b4a876698ce141822cce437a300c6,
+    type: 3}
 --- !u!114 &3481412535680271590
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4615,8 +4600,8 @@ MonoBehaviour:
   reflectMargin: 1
   Line0: {fileID: 0}
   Line1: {fileID: 0}
-  player0: {fileID: 0}
-  player1: {fileID: 0}
+  avatar0: {fileID: 0}
+  avatar1: {fileID: 0}
   owner_Racket: {fileID: 0}
   tezukaGravity: {fileID: 0}
   StrikeEffect: {fileID: 6178542901491027349, guid: 3e4adfa64267a9446b188127e483e63e,

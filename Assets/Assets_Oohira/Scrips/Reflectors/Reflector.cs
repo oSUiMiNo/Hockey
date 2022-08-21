@@ -31,11 +31,28 @@ public abstract class Reflector : MonoBehaviourPunCallbacks
     
     private void Start()
     {
-        StartCoroutine(Init(5f));
+        //StartCoroutine(Init());
+        roomDoorWay = RoomDoorWay.instance;
+        Init_Child();
+        rackets = GameObject.Find("RoomCore").GetComponent<DifineRackets>();
+        zone = GameObject.Find("RoomCore").GetComponent<ZoneDiffinitionOfRoom>();
+        objectPool = GameObject.Find("ObjectPool");
+        pool_ImpactOverlay = objectPool.GetComponent<Pool_ImpactOverlay>();
+        Define_RefloctMargin();
+        Line0 = GameObject.Find("Lines_Player0");
+        Line1 = GameObject.Find("Lines_Player1");
+
+        Debug.Log(rackets);
+        Debug.Log(rackets.racket0_Core);
+        avatar0 = roomDoorWay.avatar0.GetComponent<Avatar>();
+        avatar1 = roomDoorWay.avatar1.GetComponent<Avatar>();
+        Debug.Log(avatar0);
+        Debug.Log(Line0); Debug.Log(Line1);
+
     }
-    private IEnumerator Init(float waitTime)
+    private IEnumerator Init()
     {
-        yield return new WaitForSeconds(waitTime);
+        yield return new WaitWhile(() => RoomDoorWay.instance.Ready());
         roomDoorWay = RoomDoorWay.instance;
         Init_Child();
         rackets = GameObject.Find("RoomCore").GetComponent<DifineRackets>();

@@ -15,7 +15,7 @@ EditorBuildSettings:
     path: Assets/Assets_Oohira/Scenes/FirstScene_Oohira.unity
     guid: 06edf60805e9c1c4b8894f648b006059
   - enabled: 0
-    path: Assets/Assets_Oohira/Scenes/StartScene.unity
+    path: Assets/Assets_Oohira/Scenes/Menu.unity
     guid: e3e0185eba5aa5140b65637fbdefed6e
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: a7e34c902bc9cce41ac3472fbe17263f,

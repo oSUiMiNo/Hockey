@@ -14,7 +14,6 @@ public class Reflector_Racket : Reflector
     [SerializeField] public AudioSource source;
 
     [SerializeField] Reflector_Smash reflector_Smash = null;
-    [SerializeField] RacketMove racketMove = null;
     [SerializeField] float Speed = 10;
     [SerializeField] float speedZ = 10f;
     [SerializeField] float speedY = 1f;
@@ -46,9 +45,9 @@ public class Reflector_Racket : Reflector
         GetBallInfo(target);
 
         //if (!ballMove.canReflect) return;
-        float distance = hitInfo.distance - sphereCastMargin;
-        float nextMoveDistance = rb.velocity.magnitude * Time.fixedDeltaTime;
-        if (distance > nextMoveDistance + reflectMargin) return;
+        //float distance = hitInfo.distance - sphereCastMargin;
+        //float nextMoveDistance = rb.velocity.magnitude * Time.fixedDeltaTime;
+        //if (distance > nextMoveDistance + reflectMargin) return;
 
         if (ballMove.canChange_CanStrike == true) ballMove.canStrike = true;
         if (!ballMove.canStrike) return;

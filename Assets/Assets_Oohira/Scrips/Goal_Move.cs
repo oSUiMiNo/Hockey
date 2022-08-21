@@ -12,6 +12,11 @@ public class Goal_Move : MonoBehaviour
 
     private void Start()
     {
+        StartCoroutine(Init());
+    }
+    private IEnumerator Init()
+    {
+        yield return new WaitWhile(() => RoomDoorWay.instance.Ready());
         rb = GetComponent<Rigidbody>();
         zone = GameObject.Find("RoomCore").GetComponent<ZoneDiffinitionOfRoom>();
         rb.velocity = new Vector3(1, 0, 0) * speed_Move;

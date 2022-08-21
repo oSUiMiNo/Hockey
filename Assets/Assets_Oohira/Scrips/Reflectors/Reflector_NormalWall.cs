@@ -38,9 +38,9 @@ public class Reflector_NormalWall : Reflector
         GetBallInfo(target);
         //photonView.RPC(nameof(GetBallInfo_RPC), RpcTarget.All, target.name);
 
-        distance = hitInfo.distance - sphereCastMargin;
-        float nextMoveDistance = rb.velocity.magnitude * Time.fixedDeltaTime;
-        if (distance > nextMoveDistance + reflectMargin) return;
+        //distance = hitInfo.distance - sphereCastMargin;
+        //float nextMoveDistance = rb.velocity.magnitude * Time.fixedDeltaTime;
+        //if (distance > nextMoveDistance + reflectMargin) return;
         
         ballMove.Create_ImpactPointOverlay(hitInfo);
         owner_Ball = ball.GetComponent<Owner>().player;
@@ -180,8 +180,8 @@ public class Reflector_NormalWall : Reflector
         FlexibleReflection reflectInfo = new FlexibleReflection(ball, inDirection, normal, ballMove.constantSpeed, ballMove.constantSpeed, goal_Z, layerMask);
         Vector3 goal = reflectInfo.Destination;
         Vector3 outDirection = Vector3.Normalize(goal - start);
-        //ballMove.reboundVelocity = outDirection * ballMove.constantSpeed;
-        SetBallProps(start, outDirection * ballMove.constantSpeed);
+        ballMove.reboundVelocity = outDirection * ballMove.constantSpeed;
+        //SetBallProps(start, outDirection * ballMove.constantSpeed);
     }
     private void Reflect_Middle()
     {
@@ -190,8 +190,8 @@ public class Reflector_NormalWall : Reflector
         FlexibleReflection reflectInfo = new FlexibleReflection(ball, inDirection, normal, ballMove.constantSpeed, ballMove.constantSpeed, goal_Z, layerMask);
         Vector3 goal = reflectInfo.Destination;
         Vector3 outDirection = Vector3.Normalize(goal - start);
-        //ballMove.reboundVelocity = outDirection * ballMove.constantSpeed;
-        SetBallProps(start, outDirection * ballMove.constantSpeed);
+        ballMove.reboundVelocity = outDirection * ballMove.constantSpeed;
+        //SetBallProps(start, outDirection * ballMove.constantSpeed);
     }
     private void Reflect_Final()
     {    
@@ -199,17 +199,17 @@ public class Reflector_NormalWall : Reflector
         Vector3 direction = GetPlayerTargetPosition() - start;
         Vector3 goal = new Vector3(start.x + direction.x, start.y + direction.y, start.z + direction.z);
         Vector3 outDirection = Vector3.Normalize(goal - start);
-        //ballMove.reboundVelocity = outDirection * ballMove.constantSpeed;
-        SetBallProps(start, outDirection * ballMove.constantSpeed);
+        ballMove.reboundVelocity = outDirection * ballMove.constantSpeed;
+        //SetBallProps(start, outDirection * ballMove.constantSpeed);
     }
     private void Reflect_Normal()
     {
         Vector3 start = ball.transform.position;
         Reflection outDirection = new Reflection(ball, inDirection, normal, ballMove.constantSpeed, ballMove.constantSpeed + 0.02f, Vector3.zero);
-        //ballMove.reboundVelocity = outDirection.Velocity;
-        //ballMove.constantSpeed = outDirection.Velocity.magnitude;
-        Debug.Log(outDirection.Velocity);
-        SetBallProps(start, outDirection.Velocity);
+        ballMove.reboundVelocity = outDirection.Velocity;
+        ballMove.constantSpeed = outDirection.Velocity.magnitude;
+        //Debug.Log(outDirection.Velocity);
+        //SetBallProps(start, outDirection.Velocity);
     }
 
     [SerializeField] GameObject[] targets_Array = null;
@@ -234,70 +234,47 @@ public class Reflector_NormalWall : Reflector
     }
 
 
-    public override void OnRoomPropertiesUpdate(ExitGames.Client.Photon.Hashtable propertiesThatChanged)
-    {
-        Debug.Log("カスタムプロパティが更新された1");
-        Debug.Log(GetBallVelocity()); Debug.Log(GetBallPosition());
-        Debug.Log(gotBallVelocity); Debug.Log(gotBallPosition);
-        if (!gotBallVelocity || !gotBallPosition) return;
-        Debug.Log("カスタムプロパティが更新された2");
+    //public override void OnRoomPropertiesUpdate(ExitGames.Client.Photon.Hashtable propertiesThatChanged)
+    //{
+    //    Debug.Log("カスタムプロパティが更新された1");
+    //    Debug.Log(GetBallVelocity()); Debug.Log(GetBallPosition());
+    //    Debug.Log(gotBallVelocity); Debug.Log(gotBallPosition);
+    //    if (!gotBallVelocity || !gotBallPosition) return;
+    //    Debug.Log("カスタムプロパティが更新された2");
         
-        ballMove = GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball_BasicMove>();
-        Debug.Log(ballMove);
-        ballMove.transform.position = GetBallPosition();
-        ballMove.reboundVelocity = GetBallVelocity();
-        ballMove.ApplyReboundVelocity();
-        gotBallVelocity = false;
-    }
-
-
-    private static ExitGames.Client.Photon.Hashtable prop = new ExitGames.Client.Photon.Hashtable();
-    private static bool gotBallVelocity = false;
-    private static bool gotBallPosition = false;
-    public static void SetBallProps(Vector3 ballPosition, Vector3 ballSpeed)
-    {
-        Debug.Log("ボールの速度セット");
-        prop["BallPosition"] = ballSpeed;
-        prop["BallVelocity"] = ballSpeed;
-        prop["GotBallVelocity"] = true;
-        prop["GotBallPosition"] = true;
-        PhotonNetwork.CurrentRoom.SetCustomProperties(prop);
-        prop.Clear();
-    }
-    public static Vector3 GetBallPosition()
-    {
-        Debug.Log("ボールの速度ゲット");
-        gotBallPosition = (PhotonNetwork.CurrentRoom.CustomProperties["GotBallPosition"] is bool got) ? got : false;
-        return (PhotonNetwork.CurrentRoom.CustomProperties["BallPosition"] is Vector3 p) ? p : Vector3.zero;
-    }
-    public static Vector3 GetBallVelocity()
-    {
-        Debug.Log("ボールの速度ゲット");
-        gotBallVelocity = (PhotonNetwork.CurrentRoom.CustomProperties["GotBallVelocity"] is bool got) ? got : false;
-        return (PhotonNetwork.CurrentRoom.CustomProperties["BallVelocity"] is Vector3 v) ? v : Vector3.zero;
-    }
+    //    ballMove = GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball_BasicMove>();
+    //    Debug.Log(ballMove);
+    //    ballMove.transform.position = GetBallPosition();
+    //    ballMove.reboundVelocity = GetBallVelocity();
+    //    ballMove.ApplyReboundVelocity();
+    //    gotBallVelocity = false;
+    //}
 
 
     //private static ExitGames.Client.Photon.Hashtable prop = new ExitGames.Client.Photon.Hashtable();
-    //private static bool gotProp = false;
-    //public static void SetProp(Vector3 velocity, Vector3 inDdirection, RaycastHit hitInfo, float sphereCastMargin)
+    //private static bool gotBallVelocity = false;
+    //private static bool gotBallPosition = false;
+    //public static void SetBallProps(Vector3 ballPosition, Vector3 ballSpeed)
     //{
-    //    Debug.Log("SetMasterPos");
-    //    prop["velocity"] = velocity;
-    //    prop["inDdirection"] = inDdirection;
-    //    prop["sphereCastMargin"] = sphereCastMargin;
-    //    prop["normal"] = hitInfo.normal;
-    //    prop["gotProp"] = true;
+    //    Debug.Log("ボールの速度セット");
+    //    prop["BallPosition"] = ballSpeed;
+    //    prop["BallVelocity"] = ballSpeed;
+    //    prop["GotBallVelocity"] = true;
+    //    prop["GotBallPosition"] = true;
     //    PhotonNetwork.CurrentRoom.SetCustomProperties(prop);
     //    prop.Clear();
     //}
-    //public static void GetProp()
+    //public static Vector3 GetBallPosition()
     //{
-    //    velocity = (PhotonNetwork.CurrentRoom.CustomProperties["target"] is Vector3 v) ? v : Vector3.zero;
-    //    inDirection = (PhotonNetwork.CurrentRoom.CustomProperties["inDirection"] is Vector3 i) ? i : Vector3.zero;
-    //    sphereCastMargin = (PhotonNetwork.CurrentRoom.CustomProperties["sphereCastMargin"] is float s) ? s : 0;
-    //    normal = (PhotonNetwork.CurrentRoom.CustomProperties["normal"] is Vector3 n) ? n : Vector3.zero;
-    //    gotProp = (PhotonNetwork.CurrentRoom.CustomProperties["gotProp"] is bool got) ? got : false;
+    //    Debug.Log("ボールの速度ゲット");
+    //    gotBallPosition = (PhotonNetwork.CurrentRoom.CustomProperties["GotBallPosition"] is bool got) ? got : false;
+    //    return (PhotonNetwork.CurrentRoom.CustomProperties["BallPosition"] is Vector3 p) ? p : Vector3.zero;
+    //}
+    //public static Vector3 GetBallVelocity()
+    //{
+    //    Debug.Log("ボールの速度ゲット");
+    //    gotBallVelocity = (PhotonNetwork.CurrentRoom.CustomProperties["GotBallVelocity"] is bool got) ? got : false;
+    //    return (PhotonNetwork.CurrentRoom.CustomProperties["BallVelocity"] is Vector3 v) ? v : Vector3.zero;
     //}
 }
 

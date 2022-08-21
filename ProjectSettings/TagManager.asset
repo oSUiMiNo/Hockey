@@ -22,6 +22,7 @@ TagManager:
   - Line1
   - Targets
   - Photon
+  - RoomDoorWay
   layers:
   - Default
   - TransparentFX

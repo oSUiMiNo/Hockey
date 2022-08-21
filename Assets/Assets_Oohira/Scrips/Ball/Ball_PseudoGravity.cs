@@ -42,16 +42,12 @@ public class Ball_PseudoGravity : MonoBehaviour
     [SerializeField] GameObject racket2;
     private ZoneDiffinitionOfRoom zone = null;
     private Rigidbody rb = null;
-    private RacketMove racketMove1 = null;
-    private RacketMove racketMove2 = null;
     private void A_Init()
     {
         zone = GameObject.Find("RoomCore").GetComponent<ZoneDiffinitionOfRoom>();
         rb = this.gameObject.GetComponent<Rigidbody>();
         Debug.Log("rb " + rb);
         primitiveCoordinate = zone.primitiveCoordinate; //ƒ‹[ƒ€À•W‚Ì1–Ú·‚è•Ó‚è‚Ì’·‚³‚ğæ“¾
-        if (rackets.racket0_Core) racketMove1 = rackets.racket0_Core.GetComponent<RacketMove>();
-        if (rackets.racket1_Core) racketMove2 = rackets.racket1_Core.GetComponent<RacketMove>();
     }
     private void A_Update()
     {

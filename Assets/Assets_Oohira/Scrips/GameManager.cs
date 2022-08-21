@@ -1,8 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using TMPro;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using Photon.Pun;
+using Photon.Realtime;
+using UnityEditor;
+using TMPro;
+
 
 public class GameManager : MonoBehaviour
 {
@@ -26,12 +31,57 @@ public class GameManager : MonoBehaviour
     [SerializeField] public TextMeshProUGUI text_Score_Player0 = null;
     [SerializeField] public TextMeshProUGUI text_Score_Player1 = null;
     [SerializeField] public bool inGameScene = false;
-    
 
+
+    private RoomDoorWay roomDoorWay = null;
+    [SerializeField] public Player[] players = null;
+
+    public string playerName;
     private void Start()
     {
-        if (SceneManager.GetActiveScene().name == "FirstScene_Oohira")
-            Start_GameScene();
+        roomDoorWay = RoomDoorWay.instance;
+        roomDoorWay.ConnectToMasterServer();
+        players = roomDoorWay.GetPlayers();
+        SceneManager.sceneLoaded += OnSceneLoaded;
+        SceneManager.sceneUnloaded += OnSceneUnloaded;
+        if (SceneManager.GetActiveScene().name == "FirstScene_Oohira") StartCoroutine(InitScene_Game());
+        if (SceneManager.GetActiveScene().name == "Menu") StartCoroutine(InitScene_Menu());
+    }
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        Debug.Log(scene.name + " をロードしました");
+        if (scene.name == "FirstScene_Oohira") StartCoroutine(InitScene_Game());
+        if (scene.name == "Menu") StartCoroutine(InitScene_Menu());
+    }
+    void OnSceneUnloaded(Scene scene)
+    {
+        Debug.Log(scene.name + " をアンロードしました");
+        if (scene.name == "FirstScene_Oohira") StartCoroutine(ExitScene_Game());
+    }
+
+    public GameObject WhiteKing;
+    public GameObject BlackKing;
+    public GameObject Image;
+    public bool whiteturn = true;
+    private IEnumerator InitScene_Game()
+    {
+        roomDoorWay.Join();
+        yield return new WaitForSeconds(5f);
+        inGameScene = true;
+        text_Score_Player0 = GameObject.Find("Score_Player0").GetComponent<TextMeshProUGUI>();
+        text_Score_Player1 = GameObject.Find("Score_Player1").GetComponent<TextMeshProUGUI>();
+        text_Score_Player0.text = (0 + " / " + point_ToWin);
+        text_Score_Player1.text = (0 + " / " + point_ToWin);
+    }
+    private IEnumerator ExitScene_Game()
+    {
+        yield return new WaitForSeconds(0.1f);
+        roomDoorWay.Leave();
+    }
+
+    private IEnumerator InitScene_Menu()
+    {
+        yield return new WaitForSeconds(0.1f);
     }
 
     private void Update()
@@ -54,30 +104,32 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private IEnumerator Load_StartScene(float waitTime)
-    {
-        yield return new WaitForSeconds(waitTime);
-        SceneManager.LoadScene("StartScene");
-    }
 
-    public void Load_GameScene()
-    {
-        SceneManager.LoadScene("FirstScene_Oohira");
-        Start_GameScene();
-    }
-
-    private void Start_GameScene()
-    {
-        inGameScene = true;
-        text_Score_Player0 = GameObject.Find("Score_Player0").GetComponent<TextMeshProUGUI>();
-        text_Score_Player1 = GameObject.Find("Score_Player1").GetComponent<TextMeshProUGUI>();
-        text_Score_Player0.text = (0 + " / " + point_ToWin);
-        text_Score_Player1.text = (0 + " / " + point_ToWin);
-    }
     private void Update_GameScene()
     {
         if (!inGameScene) return;
         if (score_Player0 >= point_ToWin || score_Player1 >= point_ToWin)
-            StartCoroutine(Load_StartScene(3f));
+            Load_Menu();
+    }
+
+
+    public void Load_Game()
+    {
+        StartCoroutine(Load_Game_Co(3f));
+    }
+    private IEnumerator Load_Game_Co(float waitTime)
+    {
+        yield return new WaitForSeconds(waitTime);
+        SceneManager.LoadScene("FirstScene_Oohira");
+    }
+
+    public void Load_Menu()
+    {
+        StartCoroutine(Load_Menu_Co(3f));
+    }
+    private IEnumerator Load_Menu_Co(float waitTime)
+    {
+        yield return new WaitForSeconds(waitTime);
+        SceneManager.LoadScene("StartScene");
     }
 }

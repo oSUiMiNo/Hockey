@@ -9,9 +9,15 @@ public class Bullet : MonoBehaviour
     [SerializeField] private Vector3 coordinate_Bullet = Vector3.zero;
     private void Start()
     {
+        StartCoroutine(Init());
+    }
+    private IEnumerator Init()
+    {
+        yield return new WaitWhile(() => RoomDoorWay.instance.Ready());
         pool_Bullet = GameObject.FindGameObjectWithTag("Pool").GetComponent<Pool_Bullet>();
         zone = GameObject.Find("RoomCore").GetComponent<ZoneDiffinitionOfRoom>();
     }
+
 
     private void FixedUpdate()
     {

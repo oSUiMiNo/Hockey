@@ -38,11 +38,11 @@ public class Ball_TezukaGravity : MonoBehaviour
     private void FixedUpdate()
     {
         A_Update();
-        TezukaGravity(rackets.racket0_Core, racketMove0);  //デフォルトのゆるい手塚ゾーン
-        TezukaGravity(rackets.racket1_Core, racketMove1);
+        TezukaGravity(rackets.racket0_Core);  //デフォルトのゆるい手塚ゾーン
+        TezukaGravity(rackets.racket1_Core);
     }
 
-    private void TezukaGravity(GameObject racket, RacketMove racketMove)
+    private void TezukaGravity(GameObject racket)
     {
         //if ((10 - Mathf.Abs(ballCoordinate.x) <= tezykaJudgementRange_X)) return;
         //if ((10 - Mathf.Abs(ballCoordinate.y) <= tedukaJudgementRange_Y)) return;
@@ -58,7 +58,7 @@ public class Ball_TezukaGravity : MonoBehaviour
 
         //Vector3 racketForward = (racket.transform.position - transform.position).normalized;
         Vector3 gravityForward = (racket.transform.position - transform.position).normalized;
-        Vector3 racketCoordinate = racketMove.racketCoordinate;
+        Vector3 racketCoordinate = zone.CoordinateFromPosition(racket.transform.position);
         Vector3 tezukaGravity_Soft = gravityForward * nowSpeed * tezukaMagnification_Soft;//+ tezukaNegativeZMagnification_Soft;
         Vector3 tezukaGravity_Hard = gravityForward * nowSpeed * tezukaMagnification_Hard;//+ tezukaNegativeZMagnification_Hard;
 
@@ -84,16 +84,12 @@ public class Ball_TezukaGravity : MonoBehaviour
     [SerializeField] Vector3 ballCoordinate = new Vector3(0, 0, 0);
     private ZoneDiffinitionOfRoom zone = null;
     private Rigidbody rb = null;
-    private RacketMove racketMove0 = null;
-    private RacketMove racketMove1 = null;
     private void A_Init()
     {
         zone = GameObject.Find("RoomCore").GetComponent<ZoneDiffinitionOfRoom>();
         rb = this.gameObject.GetComponent<Rigidbody>();
         Debug.Log("rb " + rb);
         primitiveCoordinate = zone.primitiveCoordinate; //ルーム座標の1目盛り辺りの長さを取得
-        if (rackets.racket0_Core) racketMove0 = rackets.racket0_Core.GetComponent<RacketMove>();
-        if (rackets.racket1_Core) racketMove1 = rackets.racket1_Core.GetComponent<RacketMove>();
     }
     private void A_Update()
     {

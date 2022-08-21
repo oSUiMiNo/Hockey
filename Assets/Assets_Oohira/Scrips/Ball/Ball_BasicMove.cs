@@ -20,16 +20,12 @@ public class Ball_BasicMove : MonoBehaviourPunCallbacks, IPunInstantiateMagicCal
     [SerializeField] Vector3 ballCoordinate = new Vector3(0, 0, 0);
     private ZoneDiffinitionOfRoom zone = null;
     private Rigidbody rb = null;
-    [SerializeField] private RacketMove racketMove0 = null;
-    [SerializeField] private RacketMove racketMove1 = null;
     private void A_Init()
     {
         zone = GameObject.Find("RoomCore").GetComponent<ZoneDiffinitionOfRoom>();
         rb = this.gameObject.GetComponent<Rigidbody>();
         //Debug.Log("rb " + rb);
         primitiveCoordinate = zone.primitiveCoordinate; //ルーム座標の1目盛り辺りの長さを取得
-        if (rackets.racket0_Core) racketMove0 = rackets.racket0_Core.GetComponent<RacketMove>();
-        if (rackets.racket1_Core) racketMove1 = rackets.racket1_Core.GetComponent<RacketMove>();
     }
     private void A_Update()
     {
@@ -87,12 +83,17 @@ public class Ball_BasicMove : MonoBehaviourPunCallbacks, IPunInstantiateMagicCal
     [SerializeField] private Reflector reflector = null;
     [SerializeField] private PhotonManager photonManager = null;
 
-    private void Component()
+    private void Components()
     {
         col = GetComponent<SphereCollider>();
     }
-    private void Init()
+    private IEnumerator Init()
     {
+        yield return new WaitWhile(() => RoomDoorWay.instance.Ready());
+
+        A_Init();
+        Components();
+
         // isTrigger=false で使用する場合はContinuous Dynamicsに設定
         if (!col.isTrigger && rb.collisionDetectionMode != CollisionDetectionMode.ContinuousDynamic)
         {
@@ -115,15 +116,33 @@ public class Ball_BasicMove : MonoBehaviourPunCallbacks, IPunInstantiateMagicCal
 
     private void Start()
     {
+        //StartCoroutine(Init()); 
         A_Init();
-        Component();
-        Init();
-        //StartCoroutine(StartWaitForFixedUpdate());
+        Components();
+
+        // isTrigger=false で使用する場合はContinuous Dynamicsに設定
+        if (!col.isTrigger && rb.collisionDetectionMode != CollisionDetectionMode.ContinuousDynamic)
+        {
+            rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+        }
+
+        //Rigidbodyの重力の使用禁止
+        if (rb.useGravity)
+        {
+            rb.useGravity = false;
+        }
+        contactOffset = Physics.defaultContactOffset;
+        canKeepSpeed = true;
+        canChange_CanStrike = true;
+        wasStruck_ByPlayer0 = new bool[2] { false, false };
+        wasStruck_ByPlayer1 = new bool[2] { false, false };
+        record = new Vector3[recVolume];
     }
 
     private void FixedUpdate()
     {
-        if (photonManager.player0 == null) return;
+        //if (photonManager.player0 == null) return;
+        if (!RoomDoorWay.instance.avatar0 || !RoomDoorWay.instance.avatar1) return;
         if (rackets.racket0_Core == null || rackets.racket1_Core == null) return;
 
         A_Update();
@@ -147,7 +166,7 @@ public class Ball_BasicMove : MonoBehaviourPunCallbacks, IPunInstantiateMagicCal
         //ApplyReboundVelocity();  // 前フレームで反射していたら反射後速度を反映
         KeepConstantSpeed();  //球の速度を一定に保つ
         ChangeSpeed();
-        Reflect();
+        Process();
 
         //if ((transform.position - rackets.racket0_Core.transform.position).magnitude < 5f)
         //    racketMove0.Record();
@@ -383,7 +402,7 @@ public class Ball_BasicMove : MonoBehaviourPunCallbacks, IPunInstantiateMagicCal
     //[SerializeField] List<GameObject> sphereCasts_1 = new List<GameObject>();
     //[SerializeField] int count_ProcessForwardDetection_1 = 0;
     // 前方方向を監視して1フレーム後に衝突している場合は反射ベクトルを計算する。
-    private void ProcessForwardDetection(string name_ReflectorObject, LayerMask layerMask, float sphereCastMargin)
+    private void ProcessForwardDetection(string name_ReflectorObject, LayerMask layerMask, float sphereCastMargin, float reflectMargin)
     {
         //count_ProcessForwardDetection++;
         //if(sphereCasts.Count < count_ProcessForwardDetection) sphereCasts.Add(Instantiate(sphereCast));
@@ -410,35 +429,37 @@ public class Ball_BasicMove : MonoBehaviourPunCallbacks, IPunInstantiateMagicCal
 
         if (!isHit) return;
         if (hitInfo.collider.gameObject.tag != name_ReflectorObject) return;
-        
-        Reflector reflector = hitInfo.collider.gameObject.GetComponent<Reflector>();
-        //float distance = hitInfo.distance - sphereCastMargin;
-        //float nextMoveDistance = rb.velocity.magnitude * Time.fixedDeltaTime + 0.5f;
-        //if (distance > nextMoveDistance) return;
-        //else canReflect = true;
-        //Debug.Log("r  " + reflector);
-        //Debug.Log("v  " + velocity);
-        //Debug.Log("d  " + direction);
-        //Debug.Log("h  " + hitInfo.collider.gameObject.name);
-        //Debug.Log("s  " + sphereCastMargin);
-        //Debug.Log("g  " + this.gameObject);
-        reflector.Reflect(gameObject, velocity, direction, hitInfo, sphereCastMargin);
+
+        float distance = hitInfo.distance - sphereCastMargin;
+        float nextMoveDistance = rb.velocity.magnitude * Time.fixedDeltaTime;
+        if (distance > nextMoveDistance + reflectMargin) return;
+
+        photonView.RPC(nameof(Reflect), RpcTarget.All, gameObject, velocity, direction, hitInfo, sphereCastMargin);
+
+        //Reflector reflector = hitInfo.collider.gameObject.GetComponent<Reflector>();
+        //reflector.Reflect(gameObject, velocity, direction, hitInfo, sphereCastMargin);
         //canReflect = false;
     }
 
-    private void Reflect()
+    private void Process()
     {
-        ProcessForwardDetection("Wall", layerMask_Room, 0.01f);  // 進行方向に衝突対象があるかどうか確認
+        ProcessForwardDetection("Wall", layerMask_Room, 0.01f, 1.2f);  // 進行方向に衝突対象があるかどうか確認
  
         float ball_racket_Coordinate_Mag_1 = (transform.position - rackets.racket1_Core.transform.position).magnitude / primitiveCoordinate.magnitude;
-        ProcessForwardDetection("Racket1", layerMask_Racket_Collider, 0);
+        ProcessForwardDetection("Racket1", layerMask_Racket_Collider, 0, 0.8f);
 
         float ball_racket_Coordinate_Mag_0 = (transform.position - rackets.racket0_Core.transform.position).magnitude / primitiveCoordinate.magnitude;
-        ProcessForwardDetection("Racket0", layerMask_Racket_Collider, 0);
+        ProcessForwardDetection("Racket0", layerMask_Racket_Collider, 0, 0.8f);
  
         count_ProcessForwardDetection = 0;
     }
-  
+
+    [PunRPC]
+    private void Reflect(GameObject target, Vector3 velocity, Vector3 inDirection, RaycastHit hitInfo, float sphereCastMargin)
+    {
+        Reflector reflector = hitInfo.collider.gameObject.GetComponent<Reflector>();
+        reflector.Reflect(gameObject, velocity, inDirection, hitInfo, sphereCastMargin);
+    }
 
 
 
