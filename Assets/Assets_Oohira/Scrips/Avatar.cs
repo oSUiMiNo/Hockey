@@ -53,10 +53,9 @@ public class Avatar : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
 
     public override void OnRoomPropertiesUpdate(ExitGames.Client.Photon.Hashtable propertiesThatChanged)
     {
-        GetThis();
         Debug.Log(propertiesThatChanged);
+        GetThis();
         Debug.Log("プレイヤー追加1");
-        Debug.Log(playerWasSet);
         if (!playerWasSet) return;
 
         Debug.Log("プレイヤー追加2");
