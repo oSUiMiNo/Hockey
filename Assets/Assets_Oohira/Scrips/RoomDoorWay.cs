@@ -117,6 +117,7 @@ public class RoomDoorWay : MonoBehaviourPunCallbacks
         }
         else
         {
+            Debug.Log("自分は参加者1");
             StartCoroutine(CreateAvatar());
         }
     }
@@ -134,8 +135,8 @@ public class RoomDoorWay : MonoBehaviourPunCallbacks
         //GivePlayers();
         //後で実装*****************************************************
 
-        if (GetMasterColor()) avatar0.GetComponent<Avatar>().photonView.RPC(nameof(AllowAction), RpcTarget.All);
-        else avatar1.GetComponent<Avatar>().photonView.RPC(nameof(AllowAction), RpcTarget.All);
+       // if (GetMasterColor()) avatar0.GetComponent<Avatar>().photonView.RPC(nameof(AllowAction), RpcTarget.All);
+        //else avatar1.GetComponent<Avatar>().photonView.RPC(nameof(AllowAction), RpcTarget.All);
     }
 
     public override void OnPlayerLeftRoom(Player otherPlayer)
@@ -165,7 +166,6 @@ public class RoomDoorWay : MonoBehaviourPunCallbacks
                 Debug.Log("マスターの色は白 OnRoomPropertiesUpdate");
                 PhotonNetwork.Instantiate("Avatar0", new Vector3(0f, 5f, -80f), Quaternion.identity);
 
-                Debug.Log(avatar0);
                 //avatar0.GetComponent<Avatar>().photonView.RPC(nameof(LockAction), RpcTarget.All);
             }
             else
@@ -173,19 +173,22 @@ public class RoomDoorWay : MonoBehaviourPunCallbacks
                 Debug.Log("マスターの色は黒 OnRoomPropertiesUpdate");
                 PhotonNetwork.Instantiate("Avatar1", new Vector3(0f, 5f, 80f), Quaternion.Euler(0, 180, 0));
 
-                Debug.Log(avatar1);
                 //avatar1.GetComponent<Avatar>().photonView.RPC(nameof(LockAction), RpcTarget.All);
             }
         }
         else
         {
+            Debug.Log("自分は参加者2");
+            Debug.Log(GetMasterColor());
             if (GetMasterColor())
             {
+                Debug.Log("自分は参加者3");
                 Debug.Log("自分の色は黒 OnRoomPropertiesUpdate");
                 PhotonNetwork.Instantiate("Avatar1", new Vector3(0f, 5f, 80f), Quaternion.Euler(0, 180, 0));
             }
             else
             {
+                Debug.Log("自分は参加者4");
                 Debug.Log("自分の色は白 OnRoomPropertiesUpdate");
                 PhotonNetwork.Instantiate("Avatar0", new Vector3(0f, 5f, -80f), Quaternion.identity);
             }
