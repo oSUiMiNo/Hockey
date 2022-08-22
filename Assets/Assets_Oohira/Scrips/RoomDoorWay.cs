@@ -214,7 +214,7 @@ public class RoomDoorWay : MonoBehaviourPunCallbacks
                 avatar_0 = true;
             if (GameObject.Find("Avatar1(Clone)"))
                 avatar_1 = true;
-            if (GameObject.Find("Ball"))
+            if (GameObject.Find("Ball(Clone)"))
                 ball_ = true;
         }
     }
@@ -233,7 +233,7 @@ public class RoomDoorWay : MonoBehaviourPunCallbacks
         yield return new WaitUntil(() => Ready());
         avatar0 = GameObject.Find("Avatar0(Clone)");
         avatar1 = GameObject.Find("Avatar1(Clone)");
-        ball = GameObject.Find("Ball");
+        ball = GameObject.Find("Ball(Clone)");
     }
 
     //public bool Ready()
