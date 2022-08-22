@@ -42,11 +42,6 @@ public class Avatar : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
 
         Debug.Log("çÏÇÁÇÍÇΩ1");
         SetThis(gameObject);
-
-        //photonManager = GameObject.FindGameObjectWithTag("Photon").GetComponent<PhotonManager>();
-        roomDoorWay = GameObject.FindGameObjectWithTag("RoomDoorWay").GetComponent<RoomDoorWay>();
-        //photonManager.player0 = gameObject;
-      
         Debug.Log("çÏÇÁÇÍÇΩ2");
     }
 
@@ -59,17 +54,19 @@ public class Avatar : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
         if (!playerWasSet) return;
 
         Debug.Log("ÉvÉåÉCÉÑÅ[í«â¡2");
+        Debug.Log(GetThis());
+        Debug.Log(RoomDoorWay.instance.avatar0);
         if (PhotonNetwork.IsMasterClient)
         {
             if (gameObject.name == "Avatar0(Clone)")
             {
                 Debug.Log("player0í«â¡");
-                roomDoorWay.avatar0 = GetThis();
+                RoomDoorWay.instance.avatar0 = GetThis();
             }
             else
             {
                 Debug.Log("player1í«â¡");
-                roomDoorWay.avatar1 = GetThis();
+                RoomDoorWay.instance.avatar1 = GetThis();
             }
         }
         else
@@ -77,12 +74,12 @@ public class Avatar : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
             if (gameObject.name == "Avatar0(Clone)")
             {
                 Debug.Log("player0í«â¡");
-                roomDoorWay.avatar0 = GetThis();
+                RoomDoorWay.instance.avatar0 = GetThis();
             }
             else
             {
                 Debug.Log("player1í«â¡");
-                roomDoorWay.avatar1 = GetThis();
+                RoomDoorWay.instance.avatar1 = GetThis();
             }
         }
 

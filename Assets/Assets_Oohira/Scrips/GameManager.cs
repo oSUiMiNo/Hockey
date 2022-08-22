@@ -65,6 +65,7 @@ public class GameManager : MonoBehaviour
     public bool whiteturn = true;
     private IEnumerator InitScene_Game()
     {
+        Debug.Log("InitScene_Game");
         roomDoorWay.Join();
         yield return new WaitUntil(() => RoomDoorWay.instance.Ready());
         inGameScene = true;
@@ -86,6 +87,12 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            Debug.Log("A");
+            RoomDoorWay.instance.Join();
+        }
+
         if (OVRInput.Get(OVRInput.Button.One, OVRInput.Controller.RTouch)) UnityEditor.EditorApplication.isPaused = true;
         Update_GameScene();
     }

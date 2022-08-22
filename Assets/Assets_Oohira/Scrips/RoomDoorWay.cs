@@ -175,6 +175,8 @@ public class RoomDoorWay : MonoBehaviourPunCallbacks
 
                 //avatar1.GetComponent<Avatar>().photonView.RPC(nameof(LockAction), RpcTarget.All);
             }
+            //PhotonNetwork.InstantiateRoomObject("Ball", Vector3.zero, Quaternion.identity);
+            PhotonNetwork.InstantiateRoomObject("Ball", new Vector3(0f, 10f, 0f), Quaternion.identity);
         }
         else
         {
@@ -194,8 +196,6 @@ public class RoomDoorWay : MonoBehaviourPunCallbacks
             }
         }
 
-        //PhotonNetwork.InstantiateRoomObject("Ball", Vector3.zero, Quaternion.identity);
-        PhotonNetwork.InstantiateRoomObject("Ball", new Vector3(0f, 10f, 0f), Quaternion.identity);
     }
 
 
