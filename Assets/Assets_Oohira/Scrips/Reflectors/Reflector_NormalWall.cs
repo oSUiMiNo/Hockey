@@ -241,6 +241,8 @@ public class Reflector_NormalWall : Reflector
     private Vector3[] goals;
     public override void NewReflect(GameObject target, Vector3 velocity, Vector3 inDirection, RaycastHit hitInfo, float sphereCastMargin)
     {
+        GetBallInfo(target);
+
         this.velocity = velocity;
         this.inDirection = inDirection;
         this.sphereCastMargin = sphereCastMargin;
@@ -277,6 +279,12 @@ public class Reflector_NormalWall : Reflector
         {
             Debug.Log("reflect0");
             Reflect_Normal();
+
+            var adjustVelocity = distance / Time.fixedDeltaTime * inDirection;
+            ballMove.canKeepSpeed = false;
+            rb.velocity = adjustVelocity;
+
+            ballMove.ApplyReboundVelocity();
         }
 
 
