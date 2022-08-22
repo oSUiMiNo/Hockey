@@ -47,6 +47,7 @@ MonoBehaviour:
   - MasterIsBlue
   - Reflect
   - AddThis
+  - BallPos
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
