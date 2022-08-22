@@ -273,6 +273,7 @@ public class RoomDoorWay : MonoBehaviourPunCallbacks
         if (!avatar1) return false;
         if (!hockeySet) return false;
 
+        ready = true;
         return true;
     }
 }
