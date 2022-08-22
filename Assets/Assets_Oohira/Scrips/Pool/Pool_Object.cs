@@ -10,19 +10,26 @@ public abstract class Pool_Object : MonoBehaviour
     [SerializeField] protected int Quantity;
     [SerializeField] protected float HideTime;
 
+    private enum State
+    {
+        Wait,
+        Ready
+    }
+    private State state;
     public void Start()
     {
         StartCoroutine(Init());
     }
-
     private IEnumerator Init()
     {
+        state = State.Wait;
         yield return new WaitUntil(() => RoomDoorWay.instance.Ready());
         Pool = new List<GameObject>();
         Define_Object();
         Define_Quantity();
         Define_HideTime();
         Pool_Initialize();
+        state = State.Ready;
     }
 
     protected abstract void Define_Object();

@@ -14,11 +14,7 @@ public class DifineRackets : MonoBehaviour
     [SerializeField] public GameObject racket1_Collider_0;
     [SerializeField] public GameObject racket1_Collider_1;
 
-    private void Start()
-    {
-        //StartCoroutine(Init(4f));
-    }
-
+  
     public void Init()
     {
         racket0_Core = GameObject.Find("Racket0_Core");

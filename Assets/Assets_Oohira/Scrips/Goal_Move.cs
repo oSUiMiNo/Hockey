@@ -10,21 +10,31 @@ public class Goal_Move : MonoBehaviour
     private Rigidbody rb = null;
     private ZoneDiffinitionOfRoom zone = null;
 
+    private enum State 
+    {
+        Wait,
+        Ready
+    }
+    private State state;
     private void Start()
     {
         StartCoroutine(Init());
     }
     private IEnumerator Init()
     {
+        state = State.Wait;
         yield return new WaitUntil(() => RoomDoorWay.instance.Ready());
+        Debug.Log(1);
         rb = GetComponent<Rigidbody>();
         zone = GameObject.Find("RoomCore").GetComponent<ZoneDiffinitionOfRoom>();
         rb.velocity = new Vector3(1, 0, 0) * speed_Move;
+        state = State.Ready;
     }
 
     private void FixedUpdate()
     {
-        if (!RoomDoorWay.instance.Ready()) return;
+        if (state != State.Ready) return;
+        Debug.Log(2);
         coordinate_Goal = zone.CoordinateFromPosition(transform.position);
         Move();
     }

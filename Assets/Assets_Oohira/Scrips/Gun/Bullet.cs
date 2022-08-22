@@ -7,21 +7,30 @@ public class Bullet : MonoBehaviour
     [SerializeField] private Pool_Bullet pool_Bullet = null;
     [SerializeField] private ZoneDiffinitionOfRoom zone = null;
     [SerializeField] private Vector3 coordinate_Bullet = Vector3.zero;
+
+    private enum State
+    {
+        Wait,
+        Ready
+    }
+    private State state;
     private void Start()
     {
         StartCoroutine(Init());
     }
     private IEnumerator Init()
     {
+        state = State.Wait;
         yield return new WaitUntil(() => RoomDoorWay.instance.Ready());
         pool_Bullet = GameObject.FindGameObjectWithTag("Pool").GetComponent<Pool_Bullet>();
         zone = GameObject.Find("RoomCore").GetComponent<ZoneDiffinitionOfRoom>();
+        state = State.Ready;
     }
 
 
     private void FixedUpdate()
     {
-        if (!RoomDoorWay.instance.Ready()) return;
+        if (state != State.Ready) return;
         coordinate_Bullet = zone.CoordinateFromPosition(transform.position);
         CollectBullet();
     }

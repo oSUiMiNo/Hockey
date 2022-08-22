@@ -89,6 +89,7 @@ public class Ball_BasicMove : MonoBehaviourPunCallbacks//, IPunInstantiateMagicC
     }
     private IEnumerator Init()
     {
+        state = State.Wait;
         yield return new WaitUntil(() => RoomDoorWay.instance.Ready());
 
         A_Init();
@@ -111,9 +112,15 @@ public class Ball_BasicMove : MonoBehaviourPunCallbacks//, IPunInstantiateMagicC
         wasStruck_ByPlayer0 = new bool[2] { false, false };
         wasStruck_ByPlayer1 = new bool[2] { false, false };
         record = new Vector3[recVolume];
+        state = State.Ready;
     }
 
-
+    private enum State
+    {
+        Wait,
+        Ready
+    }
+    private State state;
     private void Start()
     {
         StartCoroutine(Init());
@@ -121,10 +128,10 @@ public class Ball_BasicMove : MonoBehaviourPunCallbacks//, IPunInstantiateMagicC
 
     private void FixedUpdate()
     {
-        if (!RoomDoorWay.instance.Ready()) return;
-        //if (photonManager.player0 == null) return;
-        if (!RoomDoorWay.instance.avatar0 || !RoomDoorWay.instance.avatar1) return;
+        if (state != State.Ready) return;
         if (rackets.racket0_Core == null || rackets.racket1_Core == null) return;
+
+        Debug.Log("É{Å[Éãâ“ì≠íÜ");
 
         A_Update();
 

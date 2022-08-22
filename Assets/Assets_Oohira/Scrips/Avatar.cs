@@ -15,7 +15,12 @@ public class Avatar : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
 
     [SerializeField] private GameObject roomCore = null;
 
-
+    private enum State
+    {
+        Wait,
+        Ready
+    }
+    private State state;
     private void Start()
     {
         StartCoroutine(Init());

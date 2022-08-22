@@ -37,6 +37,8 @@ public class ZoneDiffinitionOfRoom : MonoBehaviour
     float colliderMaterialsHeight;
     float colliderMaterialsLength;
 
+    private bool ready = false;
+
     private void Awake()
     {
         StartCoroutine(Init());
@@ -45,7 +47,8 @@ public class ZoneDiffinitionOfRoom : MonoBehaviour
 
     private IEnumerator Init()
     {
-        yield return new WaitUntil(() => RoomDoorWay.instance.Ready());
+        //yield return new WaitUntil(() => RoomDoorWay.instance.Ready());
+        yield return new WaitForSeconds(0f);
         if (useCustomWalls)
         {
             SetWalls();
@@ -64,11 +67,13 @@ public class ZoneDiffinitionOfRoom : MonoBehaviour
             roomPivot_Y.GetComponent<Renderer>().enabled = false;
             roomPivot_Z.GetComponent<Renderer>().enabled = false;
         }
+
+        ready = true;
     }
 
     private void FixedUpdate()
     {
-        if (!RoomDoorWay.instance.Ready()) return;
+        if (!ready) return;
         //Observation();
         Edit();
     }

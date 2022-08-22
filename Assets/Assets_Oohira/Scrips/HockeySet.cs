@@ -6,13 +6,21 @@ using UnityEngine.UI;
 
 public class HockeySet : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
 {
+    private enum State
+    {
+        Wait,
+        Ready
+    }
+    private State state;
     private void Start()
     {
         StartCoroutine(Init());
     }
     private IEnumerator Init()
     {
+        state = State.Wait;
         yield return new WaitUntil(() => RoomDoorWay.instance.Ready());
+        state = State.Ready;
     }
 
     public void OnPhotonInstantiate(PhotonMessageInfo info)
