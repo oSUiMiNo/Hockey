@@ -234,47 +234,147 @@ public class Reflector_NormalWall : Reflector
     }
 
 
-    //public override void OnRoomPropertiesUpdate(ExitGames.Client.Photon.Hashtable propertiesThatChanged)
-    //{
-    //    Debug.Log("カスタムプロパティが更新された1");
-    //    Debug.Log(GetBallVelocity()); Debug.Log(GetBallPosition());
-    //    Debug.Log(gotBallVelocity); Debug.Log(gotBallPosition);
-    //    if (!gotBallVelocity || !gotBallPosition) return;
-    //    Debug.Log("カスタムプロパティが更新された2");
-        
-    //    ballMove = GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball_BasicMove>();
-    //    Debug.Log(ballMove);
-    //    ballMove.transform.position = GetBallPosition();
-    //    ballMove.reboundVelocity = GetBallVelocity();
-    //    ballMove.ApplyReboundVelocity();
-    //    gotBallVelocity = false;
-    //}
 
 
-    //private static ExitGames.Client.Photon.Hashtable prop = new ExitGames.Client.Photon.Hashtable();
-    //private static bool gotBallVelocity = false;
-    //private static bool gotBallPosition = false;
-    //public static void SetBallProps(Vector3 ballPosition, Vector3 ballSpeed)
-    //{
-    //    Debug.Log("ボールの速度セット");
-    //    prop["BallPosition"] = ballSpeed;
-    //    prop["BallVelocity"] = ballSpeed;
-    //    prop["GotBallVelocity"] = true;
-    //    prop["GotBallPosition"] = true;
-    //    PhotonNetwork.CurrentRoom.SetCustomProperties(prop);
-    //    prop.Clear();
-    //}
-    //public static Vector3 GetBallPosition()
-    //{
-    //    Debug.Log("ボールの速度ゲット");
-    //    gotBallPosition = (PhotonNetwork.CurrentRoom.CustomProperties["GotBallPosition"] is bool got) ? got : false;
-    //    return (PhotonNetwork.CurrentRoom.CustomProperties["BallPosition"] is Vector3 p) ? p : Vector3.zero;
-    //}
-    //public static Vector3 GetBallVelocity()
-    //{
-    //    Debug.Log("ボールの速度ゲット");
-    //    gotBallVelocity = (PhotonNetwork.CurrentRoom.CustomProperties["GotBallVelocity"] is bool got) ? got : false;
-    //    return (PhotonNetwork.CurrentRoom.CustomProperties["BallVelocity"] is Vector3 v) ? v : Vector3.zero;
-    //}
+    int volume = 10;
+    private Vector3[] starts;
+    private Vector3[] goals;
+    public override void NewReflect(GameObject target, Vector3 velocity, Vector3 inDirection, RaycastHit hitInfo, float sphereCastMargin)
+    {
+        this.velocity = velocity;
+        this.inDirection = inDirection;
+        this.sphereCastMargin = sphereCastMargin;
+        this.normal = hitInfo.normal;
+
+        volume = 10;
+        starts = new Vector3[volume];
+        goals = new Vector3[volume];
+
+        First();
+        for(int a = 0; a < volume; a++)
+        {
+            ProcessReflect_Middle(a);
+        }
+        for (int a = 0; a < volume; a++)
+        {
+            StartCoroutine(Move(a)); 
+        }
+
+
+
+        if (ballMove.wasStruck_ByPlayer0[0])
+        {
+            Debug.Log("プレイヤー0が打った");
+            owner_Ball = Owners.player1;
+            line = Line1;
+            racket = rackets.racket1_Core;
+
+            if (ballMove.wasStruck_ByPlayer0[1])
+            {
+                Debug.Log("プレイヤー0reflect1");
+                if (zone.CoordinateFromPosition(ball.transform.position).z <= -5) ballMove.divisionPointsVolimeForReflect = 4;
+                else if (zone.CoordinateFromPosition(ball.transform.position).z <= -3) ballMove.divisionPointsVolimeForReflect = 2;
+                else if (zone.CoordinateFromPosition(ball.transform.position).z <= -1) ballMove.divisionPointsVolimeForReflect = 1;
+                else ballMove.divisionPointsVolimeForReflect = 1;
+                ballMove.wasStruck_ByPlayer0 = new bool[ballMove.divisionPointsVolimeForReflect + 3];
+                for (int a = 0; a < ballMove.divisionPointsVolimeForReflect + 3; a++)
+                {
+                    ballMove.wasStruck_ByPlayer0[a] = true;
+                }
+
+                Reflect_First();
+                ballMove.wasStruck_ByPlayer0[1] = false;
+            }
+            else if (ballMove.wasStruck_ByPlayer0[2 + ballMove.reflectCounter] && (2 + ballMove.reflectCounter < ballMove.wasStruck_ByPlayer0.Length - 1))
+            {
+                Debug.Log("プレイヤー0reflect2");
+                Reflect_Middle();
+                ballMove.wasStruck_ByPlayer0[2 + ballMove.reflectCounter] = false;
+                ballMove.reflectCounter++;
+            }
+            else if (ballMove.wasStruck_ByPlayer0[ballMove.wasStruck_ByPlayer0.Length - 1])
+            {
+                Debug.Log("プレイヤー0reflect3");
+                Reflect_Final();
+                ballMove.wasStruck_ByPlayer0[ballMove.wasStruck_ByPlayer0.Length - 1] = false;
+                ballMove.reflectCounter = 0;
+            }
+
+            if (!ballMove.wasStruck_ByPlayer0[ballMove.wasStruck_ByPlayer0.Length - 1]) ballMove.wasStruck_ByPlayer0[0] = false;
+        }
+        else if (ballMove.wasStruck_ByPlayer1[0])
+        {
+            Debug.Log("プレイヤー1が打った");
+            owner_Ball = Owners.player0;
+            line = Line0;
+            racket = rackets.racket0_Core;
+
+            if (ballMove.wasStruck_ByPlayer1[1])
+            {
+                Debug.Log("プレイヤー1reflect1");
+                if (zone.CoordinateFromPosition(ball.transform.position).z >= 5) ballMove.divisionPointsVolimeForReflect = 4;
+                else if (zone.CoordinateFromPosition(ball.transform.position).z >= 3) ballMove.divisionPointsVolimeForReflect = 2;
+                else if (zone.CoordinateFromPosition(ball.transform.position).z >= 1) ballMove.divisionPointsVolimeForReflect = 1;
+                else ballMove.divisionPointsVolimeForReflect = 1;
+                ballMove.wasStruck_ByPlayer1 = new bool[ballMove.divisionPointsVolimeForReflect + 3];
+                for (int a = 0; a < ballMove.divisionPointsVolimeForReflect + 3; a++)
+                {
+                    ballMove.wasStruck_ByPlayer1[a] = true;
+                }
+
+                Reflect_First();
+                ballMove.wasStruck_ByPlayer1[1] = false;
+            }
+            else if (ballMove.wasStruck_ByPlayer1[2 + ballMove.reflectCounter] && (2 + ballMove.reflectCounter < ballMove.wasStruck_ByPlayer1.Length - 1))
+            {
+                Debug.Log("プレイヤー1reflect2");
+                Reflect_Middle();
+                ballMove.wasStruck_ByPlayer1[2 + ballMove.reflectCounter] = false;
+                ballMove.reflectCounter++;
+            }
+            else if (ballMove.wasStruck_ByPlayer1[ballMove.wasStruck_ByPlayer1.Length - 1])
+            {
+                Debug.Log("プレイヤー1reflect3");
+                Reflect_Final();
+                ballMove.wasStruck_ByPlayer1[ballMove.wasStruck_ByPlayer1.Length - 1] = false;
+                ballMove.reflectCounter = 0;
+            }
+            if (!ballMove.wasStruck_ByPlayer1[ballMove.wasStruck_ByPlayer1.Length - 1]) ballMove.wasStruck_ByPlayer1[0] = false;
+        }
+        else
+        {
+            Debug.Log("reflect0");
+            Reflect_Normal();
+        }
+
+        // 衝突予定先に接するように速度を調整
+        var adjustVelocity = distance / Time.fixedDeltaTime * inDirection;
+        ballMove.canKeepSpeed = false;
+        rb.velocity = adjustVelocity;
+
+        ballMove.ApplyReboundVelocity();
+    }
+
+    private void First()
+    {
+        starts[0] = ball.transform.position;
+        Vector3 lineDirection = line.transform.position - starts[0];
+        int divisionVolume = ballMove.divisionPointsVolimeForReflect + 1;
+        ballMove.distance_Z = (lineDirection / divisionVolume).z;
+    }
+    private void ProcessReflect_Middle(int a)
+    {
+        Vector3 goal_Z = new Vector3(0, 0, starts[a].z + ballMove.distance_Z);
+        FlexibleReflection reflectInfo = new FlexibleReflection(ball, inDirection, normal, ballMove.constantSpeed, ballMove.constantSpeed, goal_Z, layerMask);
+        goals[a] = reflectInfo.Destination;
+        if(a + 1 < volume) starts[a + 1] = goals[a];
+    }
+    private IEnumerator Move(int a)
+    {
+        if(a > 0) yield return new WaitUntil(() => ball.transform.position == goals[a - 1]);
+        ball.transform.position = Vector3.MoveTowards(starts[a], goals[a], ballMove.constantSpeed);
+    }
+    
+
 }
 

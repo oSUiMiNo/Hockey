@@ -61,6 +61,8 @@ public class Ball_BasicMove : MonoBehaviourPunCallbacks//, IPunInstantiateMagicC
     [SerializeField] public int reflectCounter = 0;
     [SerializeField] public float distance_Z = 0;
 
+    [SerializeField] public Vector3[] passingPoints;
+
     [SerializeField] public Vector3? reboundVelocity; // 反射計算の後に反射速度を代入する用
     [SerializeField] public bool canKeepSpeed = true; //これがtrueの時は速度を保つ処理を実行し続ける。反射の時など速度を変える処理を行う間はfalseにする。
     [SerializeField] public bool canChangeSpeed = false;
@@ -440,7 +442,8 @@ public class Ball_BasicMove : MonoBehaviourPunCallbacks//, IPunInstantiateMagicC
         //photonView.RPC(nameof(Reflect), RpcTarget.All);
 
         Reflector reflector = hitInfo.collider.gameObject.GetComponent<Reflector>();
-        reflector.Reflect(gameObject, velocity, direction, hitInfo, sphereCastMargin);
+        //reflector.Reflect(gameObject, velocity, direction, hitInfo, sphereCastMargin);
+        reflector.NewReflect(gameObject, velocity, direction, hitInfo, sphereCastMargin);
         //canReflect = false;
     }
 

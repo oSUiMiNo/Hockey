@@ -197,4 +197,87 @@ public class Reflector_Racket : Reflector
     {
         yield return new WaitForSeconds(smashTime);
     }
+
+
+
+
+    public override void NewReflect(GameObject target, Vector3 velocity, Vector3 inDirection, RaycastHit hitInfo, float sphereCastMargin)
+    {
+        GetBallInfo(target);
+
+        //if (!ballMove.canReflect) return;
+        //float distance = hitInfo.distance - sphereCastMargin;
+        //float nextMoveDistance = rb.velocity.magnitude * Time.fixedDeltaTime;
+        //if (distance > nextMoveDistance + reflectMargin) return;
+
+        if (ballMove.canChange_CanStrike == true) ballMove.canStrike = true;
+        if (!ballMove.canStrike) return;
+
+        ballMove.canChange_CanStrike = false;
+        ballMove.canStrike = false;
+
+        //Debug.Log("ラケットに当たった3");
+        ballMove.canChangeSpeed = true;
+        ballMove.canKeepSpeed = false;
+
+        GameObject impactPointOverlay = ballMove.Create_ImpactPointOverlay(hitInfo);
+        //Debug.Log("オーバーレイの向き2" + impactPointOverlay.transform.forward);
+        //Instantiate(StrikeEffect, impactPointOverlay.transform.position, impactPointOverlay.transform.rotation);
+        StrikeEffect.transform.position = impactPointOverlay.transform.position + impactPointOverlay.transform.forward;
+        StrikeEffect.transform.rotation = impactPointOverlay.transform.rotation;
+        StrikeEffect.Play();
+
+        if (OVRInput.Get(OVRInput.Button.SecondaryHandTrigger, OVRInput.Controller.Touch) || Input.GetMouseButton(0))
+        {
+            Debug.Log("スマッシュ");
+            //reflector_Smash = GetComponent<Reflector_Smash>();
+            //reflector_Smash.Smash();
+            Smash();
+            StartCoroutine(VibrateRightController(1f, 1f, 0.5f));
+            StartCoroutine(B());
+        }
+        else
+        {
+            if (owner_Racket.player == Owners.player0)
+            {
+                //Speed = GetAcc().magnitude;
+                //Speed = OVRInput.GetLocalControllerAcceleration(controller).magnitude;
+                //Speed = StrikePower * 100;
+                ball.GetComponent<Rigidbody>().velocity = impactPointOverlay.transform.forward * Speed;
+                ballMove.changeSpeed = Speed;
+
+                avatar0.Charge(0.05f);
+                StartCoroutine(VibrateRightController(1f, 1f, 0.1f));
+                Debug.Log("加速度" + Speed);
+            }
+            else
+            {
+                ball.GetComponent<Rigidbody>().velocity = impactPointOverlay.transform.forward * Speed;
+                ballMove.changeSpeed = Speed;
+            }
+            StartCoroutine(A());
+        }
+        //UnityEditor.EditorApplication.isPaused = true;
+        Debug.Log("strike");
+        source.PlayOneShot(fire);
+
+        if (owner_Racket.player == Owners.player0)
+        {
+            ballMove.wasStruck_ByPlayer0[0] = true;
+            ballMove.wasStruck_ByPlayer0[1] = true;
+            for (int a = 0; a < ballMove.wasStruck_ByPlayer1.Length; a++)
+            {
+                ballMove.wasStruck_ByPlayer1[a] = false;
+            }
+        }
+        else
+        {
+            ballMove.wasStruck_ByPlayer1[0] = true;
+            ballMove.wasStruck_ByPlayer1[1] = true;
+            for (int a = 0; a < ballMove.wasStruck_ByPlayer0.Length; a++)
+            {
+                ballMove.wasStruck_ByPlayer0[a] = false;
+            }
+        }
+    }
 }

@@ -79,4 +79,5 @@ public abstract class Reflector : MonoBehaviourPunCallbacks
     //あとでballmoveの変数をプロパティで読み取り専用にして、速度等はこっち側で定義するようにして引数を減らす。
     //public abstract void Reflect(GameObject target, Vector3 velocity, Vector3 direction, RaycastHit hitInfo, float sphereCastMargin, float distance);
     public abstract void Reflect(GameObject target, Vector3 velocity, Vector3 inDirection, RaycastHit hitInfo, float sphereCastMargin);
+    public abstract void NewReflect(GameObject target, Vector3 velocity, Vector3 inDirection, RaycastHit hitInfo, float sphereCastMargin);
 }
