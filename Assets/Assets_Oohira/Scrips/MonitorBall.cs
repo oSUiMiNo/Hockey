@@ -9,6 +9,9 @@ public class MonitorBall : MonoBehaviourPunCallbacks
     public GameObject ball;
     public Rigidbody rb;
     public float time = 0;
+
+    public Vector3 position;
+    public Vector3 velocity;
     private enum State
     {
         Wait,
@@ -54,5 +57,7 @@ public class MonitorBall : MonoBehaviourPunCallbacks
     {
         ball.transform.position = ball.transform.position;
         rb.velocity = rb.velocity;
+        position = ball.transform.position;
+        velocity = rb.velocity = rb.velocity;
     }
 }
