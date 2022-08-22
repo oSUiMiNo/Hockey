@@ -181,8 +181,9 @@ public class RoomDoorWay : MonoBehaviourPunCallbacks
         else
         {
             Debug.Log("é©ï™ÇÕéQâ¡é“2");
-            Debug.Log(GetMasterColor());
-            if (GetMasterColor())
+            //Debug.Log(GetMasterColor());
+            //if (GetMasterColor())
+            if(GameObject.Find("Avatar0(Clone)"))
             {
                 Debug.Log("é©ï™ÇÕéQâ¡é“3");
                 Debug.Log("é©ï™ÇÃêFÇÕçï OnRoomPropertiesUpdate");
@@ -243,15 +244,15 @@ public class RoomDoorWay : MonoBehaviourPunCallbacks
         }
     }
 
-    private static ExitGames.Client.Photon.Hashtable prop = new ExitGames.Client.Photon.Hashtable();
+    private static ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable();
     private static bool gotMasterColor = false;
     public static void SetMasterColor(bool isMaster)
     {
         Debug.Log("SetMasterColor");
-        prop["masterIsBlue"] = isMaster;
-        prop["GotMasterColor"] = true;
-        PhotonNetwork.CurrentRoom.SetCustomProperties(prop);
-        prop.Clear();
+        props["masterIsBlue"] = isMaster;
+        props["GotMasterColor"] = true;
+        PhotonNetwork.CurrentRoom.SetCustomProperties(props);
+        props.Clear();
     }
     public static bool GetMasterColor()
     {
