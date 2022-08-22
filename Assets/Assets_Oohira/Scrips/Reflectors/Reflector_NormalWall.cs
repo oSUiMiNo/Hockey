@@ -253,6 +253,7 @@ public class Reflector_NormalWall : Reflector
         goals = new Vector3[volume];
         if (ballMove.wasStruck_ByPlayer0[0])
         {
+            Debug.Log("êVÇµÇ¢îΩéÀ1");
             First();
             for (int a = 0; a < volume; a++)
             {
@@ -265,6 +266,7 @@ public class Reflector_NormalWall : Reflector
         }
         else if (ballMove.wasStruck_ByPlayer1[0])
         {
+            Debug.Log("êVÇµÇ¢îΩéÀ2");
             First();
             for (int a = 0; a < volume; a++)
             {
