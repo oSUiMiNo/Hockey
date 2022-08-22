@@ -425,7 +425,13 @@ public class Ball_BasicMove : MonoBehaviourPunCallbacks//, IPunInstantiateMagicC
         float nextMoveDistance = rb.velocity.magnitude * Time.fixedDeltaTime;
         if (distance > nextMoveDistance + reflectMargin) return;
 
-        photonView.RPC(nameof(Reflect), RpcTarget.All, gameObject, velocity, direction, hitInfo, sphereCastMargin);
+        R_target = gameObject;
+        R_velocity = velocity;
+        R_direction = direction;
+        R_hitInfo = hitInfo;
+        R_sphereCastMargin = sphereCastMargin;
+
+        photonView.RPC(nameof(Reflect), RpcTarget.All);
 
         //Reflector reflector = hitInfo.collider.gameObject.GetComponent<Reflector>();
         //reflector.Reflect(gameObject, velocity, direction, hitInfo, sphereCastMargin);
@@ -445,11 +451,16 @@ public class Ball_BasicMove : MonoBehaviourPunCallbacks//, IPunInstantiateMagicC
         count_ProcessForwardDetection = 0;
     }
 
+    private GameObject R_target;
+    private Vector3 R_velocity;
+    private Vector3 R_direction;
+    private RaycastHit R_hitInfo;
+    private float R_sphereCastMargin;
     [PunRPC]
-    private void Reflect(GameObject target, Vector3 velocity, Vector3 inDirection, RaycastHit hitInfo, float sphereCastMargin)
+    private void Reflect()
     {
-        Reflector reflector = hitInfo.collider.gameObject.GetComponent<Reflector>();
-        reflector.Reflect(gameObject, velocity, inDirection, hitInfo, sphereCastMargin);
+        Reflector reflector = R_hitInfo.collider.gameObject.GetComponent<Reflector>();
+        reflector.Reflect(gameObject, R_velocity, R_direction, R_hitInfo, R_sphereCastMargin);
     }
 
 
