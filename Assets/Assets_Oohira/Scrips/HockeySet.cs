@@ -24,6 +24,8 @@ public class HockeySet : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
     public override void OnRoomPropertiesUpdate(ExitGames.Client.Photon.Hashtable propertiesThatChanged)
     {
         if (!PhotonNetwork.IsMasterClient) return;
+
+        GetThis();
         if (!stageWasSet) return;
         Debug.Log("hockeySet’Ç‰Á");
         RoomDoorWay.instance.hockeySet = GetThis();
