@@ -34,7 +34,7 @@ public class Reflector_NormalWall : Reflector
 
     public override void Reflect(GameObject target, Vector3 velocity, Vector3 inDirection, RaycastHit hitInfo, float sphereCastMargin)
     {
-        if (!PhotonNetwork.IsMasterClient) return;
+        //if (!PhotonNetwork.IsMasterClient) return;
         GetBallInfo(target);
         //photonView.RPC(nameof(GetBallInfo_RPC), RpcTarget.All, target.name);
 
