@@ -18,7 +18,7 @@ public class MonitorBall : MonoBehaviourPunCallbacks
     private void Start()
     {
         Debug.Log("モニター0");
-        if (!PhotonNetwork.IsMasterClient) return;
+        //if (!PhotonNetwork.IsMasterClient) return;
         Debug.Log("モニター3");
         StartCoroutine(Init());
     }
@@ -36,14 +36,14 @@ public class MonitorBall : MonoBehaviourPunCallbacks
 
     private void FixedUpdate()
     {
-        if (!PhotonNetwork.IsMasterClient) return;
+        //if (!PhotonNetwork.IsMasterClient) return;
         if (state != State.Ready) return;
         time += Time.deltaTime;
 
         if (time >= 3)
         {
-            ball = GameObject.Find("Ball(Clone)");
-            rb = ball.GetComponent<Rigidbody>();
+            //ball = GameObject.Find("Ball(Clone)");
+            //rb = ball.GetComponent<Rigidbody>();
             photonView.RPC(nameof(BallPos), RpcTarget.All);
             time = 0;
         }
