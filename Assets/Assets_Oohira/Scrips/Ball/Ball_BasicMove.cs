@@ -124,13 +124,13 @@ public class Ball_BasicMove : MonoBehaviourPunCallbacks//, IPunInstantiateMagicC
     private State state;
     private void Start()
     {
-        //if (!PhotonNetwork.IsMasterClient) return;
+        if (!PhotonNetwork.IsMasterClient) return;
         StartCoroutine(Init());
     }
 
     private void FixedUpdate()
     {
-        //if (!PhotonNetwork.IsMasterClient) return;
+        if (!PhotonNetwork.IsMasterClient) return;
         Debug.Log("ボール準備中2");
         if (state != State.Ready) return;
         Debug.Log("ボール準備中3");
