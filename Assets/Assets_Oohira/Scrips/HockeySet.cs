@@ -36,7 +36,7 @@ public class HockeySet : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
         GetThis();
         if (!stageWasSet) return;
         Debug.Log("hockeySet’Ç‰Á");
-        RoomDoorWay.instance.hockeySet = GetThis();
+        RoomDoorWay.instance.ball = GetThis();
         stageWasSet = false;
     }
 

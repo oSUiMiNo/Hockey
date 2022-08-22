@@ -30,13 +30,14 @@ public class RoomDoorWay : MonoBehaviourPunCallbacks
 
     public GameObject avatar0 = null;
     public GameObject avatar1 = null;
-    public GameObject hockeySet = null;
+    public GameObject ball = null;
 
 
     private void Start()
     {
         gameManager = GameManager.instance;
         Random.InitState(System.DateTime.Now.Millisecond);
+        StartCoroutine(SetObjects());
     }
 
     public void ConnectToMasterServer()
@@ -204,7 +205,7 @@ public class RoomDoorWay : MonoBehaviourPunCallbacks
 
     public bool avatar_0 = false;
     public bool avatar_1 = false;
-    public bool ball = false;
+    public bool ball_ = false;
     private void Update()
     {
         if (!Ready())
@@ -214,18 +215,25 @@ public class RoomDoorWay : MonoBehaviourPunCallbacks
             if (GameObject.Find("Avatar1(Clone)"))
                 avatar_1 = true;
             if (GameObject.Find("Ball(Clone)"))
-                ball = true;
+                ball_ = true;
         }
     }
-
     public bool Ready()
     {
         if (!avatar_0) return false;
         if (!avatar_1) return false;
-        if (!ball) return false;
+        if (!ball_) return false;
 
         ready = true;
         return true;
+    }
+
+    private IEnumerator SetObjects()
+    {
+        yield return new WaitUntil(() => Ready());
+        avatar0 = GameObject.Find("Avatar0(Clone)");
+        avatar1 = GameObject.Find("Avatar1(Clone)");
+        ball = GameObject.Find("Ball(Clone)");
     }
 
     //public bool Ready()
