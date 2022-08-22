@@ -249,97 +249,29 @@ public class Reflector_NormalWall : Reflector
         volume = 10;
         starts = new Vector3[volume];
         goals = new Vector3[volume];
-
-        First();
-        for(int a = 0; a < volume; a++)
-        {
-            ProcessReflect_Middle(a);
-        }
-        for (int a = 0; a < volume; a++)
-        {
-            StartCoroutine(Move(a)); 
-        }
-
-
-
         if (ballMove.wasStruck_ByPlayer0[0])
         {
-            Debug.Log("プレイヤー0が打った");
-            owner_Ball = Owners.player1;
-            line = Line1;
-            racket = rackets.racket1_Core;
-
-            if (ballMove.wasStruck_ByPlayer0[1])
+            First();
+            for (int a = 0; a < volume; a++)
             {
-                Debug.Log("プレイヤー0reflect1");
-                if (zone.CoordinateFromPosition(ball.transform.position).z <= -5) ballMove.divisionPointsVolimeForReflect = 4;
-                else if (zone.CoordinateFromPosition(ball.transform.position).z <= -3) ballMove.divisionPointsVolimeForReflect = 2;
-                else if (zone.CoordinateFromPosition(ball.transform.position).z <= -1) ballMove.divisionPointsVolimeForReflect = 1;
-                else ballMove.divisionPointsVolimeForReflect = 1;
-                ballMove.wasStruck_ByPlayer0 = new bool[ballMove.divisionPointsVolimeForReflect + 3];
-                for (int a = 0; a < ballMove.divisionPointsVolimeForReflect + 3; a++)
-                {
-                    ballMove.wasStruck_ByPlayer0[a] = true;
-                }
-
-                Reflect_First();
-                ballMove.wasStruck_ByPlayer0[1] = false;
+                ProcessReflect_Middle(a);
             }
-            else if (ballMove.wasStruck_ByPlayer0[2 + ballMove.reflectCounter] && (2 + ballMove.reflectCounter < ballMove.wasStruck_ByPlayer0.Length - 1))
+            for (int a = 0; a < volume; a++)
             {
-                Debug.Log("プレイヤー0reflect2");
-                Reflect_Middle();
-                ballMove.wasStruck_ByPlayer0[2 + ballMove.reflectCounter] = false;
-                ballMove.reflectCounter++;
+                StartCoroutine(Move(a));
             }
-            else if (ballMove.wasStruck_ByPlayer0[ballMove.wasStruck_ByPlayer0.Length - 1])
-            {
-                Debug.Log("プレイヤー0reflect3");
-                Reflect_Final();
-                ballMove.wasStruck_ByPlayer0[ballMove.wasStruck_ByPlayer0.Length - 1] = false;
-                ballMove.reflectCounter = 0;
-            }
-
-            if (!ballMove.wasStruck_ByPlayer0[ballMove.wasStruck_ByPlayer0.Length - 1]) ballMove.wasStruck_ByPlayer0[0] = false;
         }
         else if (ballMove.wasStruck_ByPlayer1[0])
         {
-            Debug.Log("プレイヤー1が打った");
-            owner_Ball = Owners.player0;
-            line = Line0;
-            racket = rackets.racket0_Core;
-
-            if (ballMove.wasStruck_ByPlayer1[1])
+            First();
+            for (int a = 0; a < volume; a++)
             {
-                Debug.Log("プレイヤー1reflect1");
-                if (zone.CoordinateFromPosition(ball.transform.position).z >= 5) ballMove.divisionPointsVolimeForReflect = 4;
-                else if (zone.CoordinateFromPosition(ball.transform.position).z >= 3) ballMove.divisionPointsVolimeForReflect = 2;
-                else if (zone.CoordinateFromPosition(ball.transform.position).z >= 1) ballMove.divisionPointsVolimeForReflect = 1;
-                else ballMove.divisionPointsVolimeForReflect = 1;
-                ballMove.wasStruck_ByPlayer1 = new bool[ballMove.divisionPointsVolimeForReflect + 3];
-                for (int a = 0; a < ballMove.divisionPointsVolimeForReflect + 3; a++)
-                {
-                    ballMove.wasStruck_ByPlayer1[a] = true;
-                }
-
-                Reflect_First();
-                ballMove.wasStruck_ByPlayer1[1] = false;
+                ProcessReflect_Middle(a);
             }
-            else if (ballMove.wasStruck_ByPlayer1[2 + ballMove.reflectCounter] && (2 + ballMove.reflectCounter < ballMove.wasStruck_ByPlayer1.Length - 1))
+            for (int a = 0; a < volume; a++)
             {
-                Debug.Log("プレイヤー1reflect2");
-                Reflect_Middle();
-                ballMove.wasStruck_ByPlayer1[2 + ballMove.reflectCounter] = false;
-                ballMove.reflectCounter++;
+                StartCoroutine(Move(a));
             }
-            else if (ballMove.wasStruck_ByPlayer1[ballMove.wasStruck_ByPlayer1.Length - 1])
-            {
-                Debug.Log("プレイヤー1reflect3");
-                Reflect_Final();
-                ballMove.wasStruck_ByPlayer1[ballMove.wasStruck_ByPlayer1.Length - 1] = false;
-                ballMove.reflectCounter = 0;
-            }
-            if (!ballMove.wasStruck_ByPlayer1[ballMove.wasStruck_ByPlayer1.Length - 1]) ballMove.wasStruck_ByPlayer1[0] = false;
         }
         else
         {
@@ -347,12 +279,7 @@ public class Reflector_NormalWall : Reflector
             Reflect_Normal();
         }
 
-        // 衝突予定先に接するように速度を調整
-        var adjustVelocity = distance / Time.fixedDeltaTime * inDirection;
-        ballMove.canKeepSpeed = false;
-        rb.velocity = adjustVelocity;
 
-        ballMove.ApplyReboundVelocity();
     }
 
     private void First()
