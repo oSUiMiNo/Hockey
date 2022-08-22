@@ -179,22 +179,27 @@ public class Ball_BasicMove : MonoBehaviourPunCallbacks//, IPunInstantiateMagicC
         first = false;
     }
 
-
-
     public void ApplyReboundVelocity()
     {
-       photonView.RPC(nameof(ApplyReboundVelocity_RPC), RpcTarget.All);
-    }
-
-    [PunRPC]
-    public void ApplyReboundVelocity_RPC()
-    {
-        if (reboundVelocity == null) return;
-
         rb.velocity = reboundVelocity.Value;
         reboundVelocity = null;
         canKeepSpeed = true;
     }
+
+    //public void ApplyReboundVelocity()
+    //{
+    //   photonView.RPC(nameof(ApplyReboundVelocity_RPC), RpcTarget.All);
+    //}
+
+    //[PunRPC]
+    //public void ApplyReboundVelocity_RPC()
+    //{
+    //    if (reboundVelocity == null) return;
+
+    //    rb.velocity = reboundVelocity.Value;
+    //    reboundVelocity = null;
+    //    canKeepSpeed = true;
+    //}
 
     // ë¨ìxÇàÍíËÇ…ï€Ç¬
     // è’ìÀÇ‚à¯Ç¡Ç©Ç©ÇËÇ…ÇÊÇÈå∏ë¨Çè„èëÇ´Ç∑ÇÈññ⁄
@@ -435,8 +440,8 @@ public class Ball_BasicMove : MonoBehaviourPunCallbacks//, IPunInstantiateMagicC
 
         photonView.RPC(nameof(Reflect), RpcTarget.All);
 
-        //Reflector reflector = hitInfo.collider.gameObject.GetComponent<Reflector>();
-        //reflector.Reflect(gameObject, velocity, direction, hitInfo, sphereCastMargin);
+        Reflector reflector = hitInfo.collider.gameObject.GetComponent<Reflector>();
+        reflector.Reflect(gameObject, velocity, direction, hitInfo, sphereCastMargin);
         //canReflect = false;
     }
 
