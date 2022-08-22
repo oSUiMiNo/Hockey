@@ -121,6 +121,7 @@ public class RoomDoorWay : MonoBehaviourPunCallbacks
                 Debug.Log("マスターの色は黒 OnRoomPropertiesUpdate");
                 PhotonNetwork.Instantiate("Avatar1", new Vector3(0f, 5f, 80f), Quaternion.Euler(0, 180, 0));
             }
+            PhotonNetwork.InstantiateRoomObject("BallMonitor", new Vector3(0f, 10f, 0f), Quaternion.identity);
             PhotonNetwork.InstantiateRoomObject("Ball", new Vector3(0f, 10f, 0f), Quaternion.identity);
         }
         else

@@ -17,13 +17,17 @@ public class MonitorBall : MonoBehaviourPunCallbacks
     private State state;
     private void Start()
     {
+        Debug.Log("モニター0");
         if (!PhotonNetwork.IsMasterClient) return;
+        Debug.Log("モニター3");
         StartCoroutine(Init());
     }
     private IEnumerator Init()
     {
+        Debug.Log("モニター1");
         state = State.Wait;
         yield return new WaitUntil(() => RoomDoorWay.instance.Ready());
+        Debug.Log("モニター2");
         ball = GameObject.Find("Ball(Clone)");
         rb = ball.GetComponent<Rigidbody>();
         state = State.Ready;
