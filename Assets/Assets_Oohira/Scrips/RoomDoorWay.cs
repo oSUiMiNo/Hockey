@@ -104,6 +104,7 @@ public class RoomDoorWay : MonoBehaviourPunCallbacks
         //Œã‚ÅŽÀ‘•*****************************************************
 
         int randomNumber = Random.Range(0, 2);
+        randomNumber = 1;
 
         if (PhotonNetwork.IsMasterClient)
         {
