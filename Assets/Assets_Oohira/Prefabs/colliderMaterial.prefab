@@ -65,8 +65,8 @@ MonoBehaviour:
   reflectMargin: 0
   Line0: {fileID: 0}
   Line1: {fileID: 0}
-  player0: {fileID: 0}
-  player1: {fileID: 0}
+  avatar0: {fileID: 0}
+  avatar1: {fileID: 0}
   owner_Ball: 0
   line: {fileID: 0}
   debugMarker: {fileID: 6744415288262540347, guid: 596145b6022472f4a96ab8a0c31f97e3,
@@ -91,7 +91,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8670272141686437370}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1

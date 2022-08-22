@@ -432,13 +432,12 @@ public class Ball_BasicMove : MonoBehaviourPunCallbacks//, IPunInstantiateMagicC
         float nextMoveDistance = rb.velocity.magnitude * Time.fixedDeltaTime;
         if (distance > nextMoveDistance + reflectMargin) return;
 
-        R_target = gameObject;
-        R_velocity = velocity;
-        R_direction = direction;
-        R_hitInfo = hitInfo;
-        R_sphereCastMargin = sphereCastMargin;
-
-        photonView.RPC(nameof(Reflect), RpcTarget.All);
+        //R_target = gameObject;
+        //R_velocity = velocity;
+        //R_direction = direction;
+        //R_hitInfo = hitInfo;
+        //R_sphereCastMargin = sphereCastMargin;
+        //photonView.RPC(nameof(Reflect), RpcTarget.All);
 
         Reflector reflector = hitInfo.collider.gameObject.GetComponent<Reflector>();
         reflector.Reflect(gameObject, velocity, direction, hitInfo, sphereCastMargin);
