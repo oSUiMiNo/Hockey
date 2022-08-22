@@ -89,9 +89,10 @@ public class Ball_BasicMove : MonoBehaviourPunCallbacks//, IPunInstantiateMagicC
     }
     private IEnumerator Init()
     {
+        Debug.Log("ボール準備中0");
         state = State.Wait;
         yield return new WaitUntil(() => RoomDoorWay.instance.Ready());
-
+        Debug.Log("ボール準備中1");
         A_Init();
         Components();
 
@@ -128,7 +129,9 @@ public class Ball_BasicMove : MonoBehaviourPunCallbacks//, IPunInstantiateMagicC
 
     private void FixedUpdate()
     {
+        Debug.Log("ボール準備中2");
         if (state != State.Ready) return;
+        Debug.Log("ボール準備中3");
         if (rackets.racket0_Core == null || rackets.racket1_Core == null) return;
 
         Debug.Log("ボール稼働中");

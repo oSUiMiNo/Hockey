@@ -30,7 +30,7 @@ public class Avatar : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
         yield return new WaitUntil(() => RoomDoorWay.instance.Ready());
         gageImage = GameObject.Find("Gage1").GetComponent<Image>();
         rackets = GameObject.Find("RoomCore").GetComponent<DifineRackets>();
-        rackets.Init();
+        //rackets.Init();
     }
 
     public void Charge(float chargePoint)
@@ -88,6 +88,9 @@ public class Avatar : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
             }
         }
 
+        Debug.Log("ÉâÉPÉbÉgê›íË1");
+        rackets = GameObject.Find("RoomCore").GetComponent<DifineRackets>();
+        //rackets.Init();
         playerWasSet = false;
         //photonView.RPC(nameof(AddThis), RpcTarget.All);
     }
