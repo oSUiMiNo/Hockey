@@ -442,8 +442,8 @@ public class Ball_BasicMove : MonoBehaviourPunCallbacks//, IPunInstantiateMagicC
         //photonView.RPC(nameof(Reflect), RpcTarget.All);
 
         Reflector reflector = hitInfo.collider.gameObject.GetComponent<Reflector>();
-        //reflector.Reflect(gameObject, velocity, direction, hitInfo, sphereCastMargin);
-        reflector.NewReflect(gameObject, velocity, direction, hitInfo, sphereCastMargin);
+        reflector.Reflect(gameObject, velocity, direction, hitInfo, sphereCastMargin);
+        //reflector.NewReflect(gameObject, velocity, direction, hitInfo, sphereCastMargin);
         //canReflect = false;
     }
 

@@ -236,7 +236,7 @@ public class Reflector_NormalWall : Reflector
 
 
 
-    int volume = 10;
+    int volume = 4;
     private Vector3[] starts;
     private Vector3[] goals;
     public override void NewReflect(GameObject target, Vector3 velocity, Vector3 inDirection, RaycastHit hitInfo, float sphereCastMargin)
@@ -248,11 +248,37 @@ public class Reflector_NormalWall : Reflector
         this.sphereCastMargin = sphereCastMargin;
         this.normal = hitInfo.normal;
 
+        if (GetComponent<WallType>().type == WallTypes.BackWall)
+        {
+            Debug.Log("プレイヤー0の壁に当たった");
+            ballMove.wasStruck_ByPlayer0[0] = true;
+            ballMove.wasStruck_ByPlayer0[1] = true;
+            for (int a = 0; a < ballMove.wasStruck_ByPlayer1.Length; a++)
+            {
+                ballMove.wasStruck_ByPlayer1[a] = false;
+            }
+            avatar0.Charge(-0.5f);
+        }
+        else if (GetComponent<WallType>().type == WallTypes.BackWall)
+        {
+            Debug.Log("プレイヤー1の壁に当たった");
+            ballMove.wasStruck_ByPlayer1[0] = true;
+            ballMove.wasStruck_ByPlayer1[1] = true;
+            for (int a = 0; a < ballMove.wasStruck_ByPlayer0.Length; a++)
+            {
+                ballMove.wasStruck_ByPlayer0[a] = false;
+            }
+        }
+
         volume = 10;
         starts = new Vector3[volume];
         goals = new Vector3[volume];
         if (ballMove.wasStruck_ByPlayer0[0])
         {
+            owner_Ball = Owners.player1;
+            line = Line1;
+            racket = rackets.racket1_Core;
+
             Debug.Log("新しい反射1");
             First();
             for (int a = 0; a < volume; a++)
@@ -266,6 +292,10 @@ public class Reflector_NormalWall : Reflector
         }
         else if (ballMove.wasStruck_ByPlayer1[0])
         {
+            owner_Ball = Owners.player0;
+            line = Line0;
+            racket = rackets.racket0_Core;
+
             Debug.Log("新しい反射2");
             First();
             for (int a = 0; a < volume; a++)
@@ -308,8 +338,10 @@ public class Reflector_NormalWall : Reflector
     }
     private IEnumerator Move(int a)
     {
-        if(a > 0) yield return new WaitUntil(() => ball.transform.position == goals[a - 1]);
+        Debug.DrawRay(starts[a], goals[a] - starts[a], Color.white, 8f, false);
+        if (a > 0) yield return new WaitUntil(() => ball.transform.position == goals[a - 1]);
         ball.transform.position = Vector3.MoveTowards(starts[a], goals[a], ballMove.constantSpeed);
+        Debug.Log("新しい反射3");
     }
     
 

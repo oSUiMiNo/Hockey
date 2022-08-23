@@ -39,7 +39,7 @@ public class MonitorBall : MonoBehaviourPunCallbacks
 
     private void FixedUpdate()
     {
-        //if (!PhotonNetwork.IsMasterClient) return;
+        if (!PhotonNetwork.IsMasterClient) return;
         if (state != State.Ready) return;
         time += Time.deltaTime;
 
@@ -53,11 +53,9 @@ public class MonitorBall : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    private void BallPos()
+    private void BallPos(Vector3 position, Vector3 velocity)
     {
         ball.transform.position = ball.transform.position;
         rb.velocity = rb.velocity;
-        position = ball.transform.position;
-        velocity = rb.velocity = rb.velocity;
     }
 }

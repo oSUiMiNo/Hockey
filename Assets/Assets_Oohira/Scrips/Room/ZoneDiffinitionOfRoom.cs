@@ -159,12 +159,12 @@ public class ZoneDiffinitionOfRoom : MonoBehaviour
        );
     }
 
-    [SerializeField] GameObject collider_Left = null;
-    [SerializeField] GameObject collider_Right = null;
-    [SerializeField] GameObject collider_Floor = null;
-    [SerializeField] GameObject collider_Ceiling = null;
-    [SerializeField] GameObject collider_Back = null;
-    [SerializeField] GameObject collider_Front = null;
+    [SerializeField] public GameObject collider_Left = null;
+    [SerializeField] public GameObject collider_Right = null;
+    [SerializeField] public GameObject collider_Floor = null;
+    [SerializeField] public GameObject collider_Ceiling = null;
+    [SerializeField] public GameObject collider_Back = null;
+    [SerializeField] public GameObject collider_Front = null;
     private void CreateColliderMaterials()
     {
         collider_Left = Instantiate(colliderMaterial);
