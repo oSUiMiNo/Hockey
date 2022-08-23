@@ -50,6 +50,8 @@ MonoBehaviour:
   ball: {fileID: 0}
   rb: {fileID: 0}
   time: 0
+  position: {x: 0, y: 0, z: 0}
+  velocity: {x: 0, y: 0, z: 0}
 --- !u!33 &1168348147749004737
 MeshFilter:
   m_ObjectHideFlags: 0
