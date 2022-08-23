@@ -43,7 +43,7 @@ public class MonitorBall : MonoBehaviourPunCallbacks
         if (state != State.Ready) return;
         time += Time.deltaTime;
 
-        if (time >= 3)
+        if (time >= 1)
         {
             //ball = GameObject.Find("Ball(Clone)");
             //rb = ball.GetComponent<Rigidbody>();
