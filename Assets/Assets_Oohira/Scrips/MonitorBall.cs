@@ -45,9 +45,11 @@ public class MonitorBall : MonoBehaviourPunCallbacks
 
         if (time >= 3)
         {
+            position = ball.transform.position;
+            velocity = rb.velocity;
             //ball = GameObject.Find("Ball(Clone)");
             //rb = ball.GetComponent<Rigidbody>();
-            photonView.RPC(nameof(BallPos), RpcTarget.All);
+            photonView.RPC(nameof(BallPos), RpcTarget.All, position, velocity);
             time = 0;
         }
     }
@@ -55,7 +57,7 @@ public class MonitorBall : MonoBehaviourPunCallbacks
     [PunRPC]
     private void BallPos(Vector3 position, Vector3 velocity)
     {
-        ball.transform.position = ball.transform.position;
-        rb.velocity = rb.velocity;
+        ball.transform.position = position;
+        rb.velocity = velocity;
     }
 }
