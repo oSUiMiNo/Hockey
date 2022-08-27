@@ -45,7 +45,7 @@ GameObject:
   - component: {fileID: 332145695913884881}
   - component: {fileID: 337781240722629553}
   m_Layer: 0
-  m_Name: BeachBat0
+  m_Name: Racket0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
