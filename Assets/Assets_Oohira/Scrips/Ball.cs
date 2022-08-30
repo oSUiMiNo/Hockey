@@ -72,7 +72,8 @@ public class Ball : MonoBehaviour
         state = State.Wait;
         yield return new WaitUntil(() => RoomDoorWay.instance.Ready());
         //yield return new WaitForSeconds(1);
-        
+        line0 = GameObject.Find("Lines_Player0");
+        line1 = GameObject.Find("Lines_Player1");
         racket0 = GameObject.Find("Racket0");
         racket1 = GameObject.Find("Racket1");
         rb = GetComponent<Rigidbody>();

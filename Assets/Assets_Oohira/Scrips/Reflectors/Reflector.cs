@@ -31,7 +31,7 @@ public abstract class Reflector : MonoBehaviourPunCallbacks
     
     private void Start()
     {
-        StartCoroutine(Init());
+        //StartCoroutine(Init());
     }
     private IEnumerator Init()
     {

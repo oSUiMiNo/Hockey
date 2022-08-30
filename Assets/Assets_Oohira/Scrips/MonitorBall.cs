@@ -31,7 +31,7 @@ public class MonitorBall : MonoBehaviourPunCallbacks
         state = State.Wait;
         yield return new WaitUntil(() => RoomDoorWay.instance.Ready());
         Debug.Log("ÉÇÉjÉ^Å[2");
-        ball = GameObject.Find("Ball(Clone)");
+        ball = GameObject.Find("Ball_New(Clone)");
         rb = ball.GetComponent<Rigidbody>();
         state = State.Ready;
     }

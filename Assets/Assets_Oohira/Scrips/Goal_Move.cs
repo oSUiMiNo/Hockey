@@ -34,7 +34,7 @@ public class Goal_Move : MonoBehaviour
     private void FixedUpdate()
     {
         if (state != State.Ready) return;
-        Debug.Log(2);
+        //Debug.Log(2);
         coordinate_Goal = zone.CoordinateFromPosition(transform.position);
         Move();
     }
