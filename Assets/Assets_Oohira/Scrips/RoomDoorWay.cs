@@ -122,6 +122,7 @@ public class RoomDoorWay : MonoBehaviourPunCallbacks
             }
             PhotonNetwork.InstantiateRoomObject("BallMonitor", new Vector3(0f, 10f, 0f), Quaternion.identity);
             //PhotonNetwork.Instantiate("Ball", new Vector3(0f, 10f, 0f), Quaternion.identity);
+            PhotonNetwork.Instantiate("Ball_New", new Vector3(0f, 10f, 0f), Quaternion.identity);
         }
         else
         {
