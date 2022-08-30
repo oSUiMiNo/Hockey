@@ -30,7 +30,7 @@ public class Ball : MonoBehaviour
         ToPlayer1,
         Idle
     }
-    private State state;
+    [SerializeField] private State state;
     public MoveState moveState = MoveState.Idle;
     public StrikeState strikeState = StrikeState.Idle;
     public ToPlayerState toPlayerState = ToPlayerState.Idle;
@@ -68,17 +68,17 @@ public class Ball : MonoBehaviour
     {
         Random.InitState(System.DateTime.Now.Millisecond);
         moveState = MoveState.First;
-        
+
         state = State.Wait;
-        yield return new WaitUntil(() => RoomDoorWay.instance.Ready());
-        //yield return new WaitForSeconds(1);
+        //yield return new WaitUntil(() => RoomDoorWay.instance.Ready());
+        yield return new WaitForSeconds(1);
         line0 = GameObject.Find("Lines_Player0");
         line1 = GameObject.Find("Lines_Player1");
         racket0 = GameObject.Find("Racket0");
         racket1 = GameObject.Find("Racket1");
         rb = GetComponent<Rigidbody>();
         randomNumber = Random.Range(-3, 3);
-        
+
         points = new Vector3[passingPointsVolume + 1];
         normals = new Vector3[passingPointsVolume + 1];
         for (int a = 0; a < passingPointsVolume; a++)
@@ -116,21 +116,73 @@ public class Ball : MonoBehaviour
         if (toPlayerState != ToPlayerState.Idle) Process();
     }
 
+    private void P(int a)
+    {
+        if (a < passingPointsVolume - 1)
+        {
+            if (moveState == MoveState.First)
+            {
+                //反転の入口***********************************
+                Debug.Log("First  " + a);
+                points[a] = transform.position;
+                outDirection = firstDirection.normalized;
+                moveState = MoveState.Move;
+            }
+        }
+
+        if (a >= passingPointsVolume - 1 && strikeState == StrikeState.Idle)
+        {
+            Vector3 inDirection;
+            Vector3 normal;
+            if (a == 0)                   //aが0の最初のループ
+            {
+                //反転の入口***********************************
+                inDirection = (points[a] - lastPoint).normalized;
+                Debug.Log("入射  " + inDirection);
+                Debug.Log(points[a] + ",  " + normals[a]);
+                normal = normals[a];
+                outDirection = (OutDestination_General(inDirection, normal) - points[a]).normalized;
+            }
+        }
+    }
+    private void W(int a)
+    {
+        //反転の入口***********************************
+        if (count == passingPointsVolume + 1)
+        {
+            lastPoint = points[a - 1];
+            lastNormal = normals[a];
+            Debug.Log("前の最後  " + lastPoint);
+            Debug.Log("前の法線  " + lastNormal);
+            if (owner_Ball == Owners.player0)
+            {
+                owner_Ball = Owners.player1; //Debug.Log("オーナーチェンジ0  Wait");
+            }
+            else if (owner_Ball == Owners.player1)
+            {
+                owner_Ball = Owners.player0; //Debug.Log("オーナーチェンジ1  Wait");
+            }
+            toPlayerState = ToPlayerState.Idle;
+            moveState = MoveState.Reflect;
+        }
+    }
+
+    Vector3 outDirection = Vector3.zero;
     private void ProcessReflect_Middle(int a)
     {
         Color rayColor = Color.white;
         float radius = transform.localScale.x / 2;
-        Vector3 outDirection = Vector3.zero;
         RaycastHit hitInfo;
         if (a < passingPointsVolume - 1)                                //最後のカウント以外
         {
             if (moveState == MoveState.First)            //ゲーム開始後の一番最初
             {
-                Debug.Log("First  " + a);
-                points[a] = transform.position;
-                //outDirection = Vector3.one * randomNumber;
-                outDirection = firstDirection.normalized;
-                moveState = MoveState.Move;
+                //反転の入口***********************************
+                //Debug.Log("First  " + a);
+                //points[a] = transform.position;
+                //outDirection = firstDirection.normalized;
+                //moveState = MoveState.Move;
+                P(a);
             }
             else if (strikeState != StrikeState.Idle)    //ラケットで打たれた直後
             {
@@ -144,11 +196,13 @@ public class Ball : MonoBehaviour
                 Vector3 normal;
                 if (a == 0)                   //aが0の最初のループ
                 {
-                    inDirection = (points[a] - lastPoint).normalized;
-                    Debug.Log("入射  " + inDirection);
-                    Debug.Log(points[a] + ",  " + normals[a]);
-                    normal = normals[a];
-                    outDirection = (OutDestination_General(inDirection, normal) - points[a]).normalized;
+                    //反転の入口***********************************
+                    //inDirection = (points[a] - lastPoint).normalized;
+                    //Debug.Log("入射  " + inDirection);
+                    //Debug.Log(points[a] + ",  " + normals[a]);
+                    //normal = normals[a];
+                    //outDirection = (OutDestination_General(inDirection, normal) - points[a]).normalized;
+                    P(a);
                 }
                 else                          //aが1～最後までのループ
                 {
@@ -188,7 +242,7 @@ public class Ball : MonoBehaviour
     private IEnumerator Wait(int a)
     {
         Debug.Log("Wait0  " + a);
-        if(count <= passingPointsVolume)   //カウントが0～インデックスの最大+1まで
+        if (count <= passingPointsVolume)   //カウントが0～インデックスの最大+1まで
         {
             Debug.Log("Wait1-0  " + a);
             yield return new WaitUntil(() => transform.position == points[a]);
@@ -201,26 +255,30 @@ public class Ball : MonoBehaviour
                 if (owner_Ball == Owners.player1) toPlayerState = ToPlayerState.ToPlayer1;
             }
         }
+
+        //反転の入口***********************************
         if (count == passingPointsVolume + 1)
         {
             Debug.Log("Wait2-0  " + a);
             yield return new WaitUntil(() => transform.position == points[a]);
             Debug.Log("Wait2-1  " + a);
             Debug.Log("Count  " + count);
-            lastPoint = points[a - 1];
-            lastNormal = normals[a];
-            Debug.Log("前の最後  " + lastPoint);
-            Debug.Log("前の法線  " + lastNormal);
-            if (owner_Ball == Owners.player0)
-            {
-                owner_Ball = Owners.player1; //Debug.Log("オーナーチェンジ0  Wait");
-            }
-            else if (owner_Ball == Owners.player1)
-            {
-                owner_Ball = Owners.player0; //Debug.Log("オーナーチェンジ1  Wait");
-            }
-            toPlayerState = ToPlayerState.Idle;
-            moveState = MoveState.Reflect;
+
+            //lastPoint = points[a - 1];
+            //lastNormal = normals[a];
+            //Debug.Log("前の最後  " + lastPoint);
+            //Debug.Log("前の法線  " + lastNormal);
+            //if (owner_Ball == Owners.player0)
+            //{
+            //    owner_Ball = Owners.player1; //Debug.Log("オーナーチェンジ0  Wait");
+            //}
+            //else if (owner_Ball == Owners.player1)
+            //{
+            //    owner_Ball = Owners.player0; //Debug.Log("オーナーチェンジ1  Wait");
+            //}
+            //toPlayerState = ToPlayerState.Idle;
+            //moveState = MoveState.Reflect;
+            W(a);
         }
     }
     private void Move()
@@ -245,17 +303,17 @@ public class Ball : MonoBehaviour
         Vector3 horizontal_Volume = inDirection - inNormal_Volume;
 
         Vector3 Spherecast_direction = Vector3.Normalize(horizontal_Volume + outNormal_Volume);
-    
+
         float offset = Physics.defaultContactOffset * 2;
         Vector3 origin = transform.position;
         float colliderRadius = transform.localScale.x / 2 + offset;
-     
+
         Physics.SphereCast(origin, colliderRadius, Spherecast_direction, out RaycastHit hitInfo, 10000f, layerMask_Wall);
         //Debug.DrawRay(origin, Spherecast_direction * 120, Color.black, 5f, false);
 
         Vector3 destination = hitInfo.point;
         Debug.Log("Destination_Genaral" + hitInfo.point);
-        
+
         return destination;
     }
     private Vector3 OutDestination_Flex(Vector3 inDirection, Vector3 contactPointNormal, Vector3 destinationElement2)
@@ -272,14 +330,14 @@ public class Ball : MonoBehaviour
         float offset = Physics.defaultContactOffset * 2;
         Vector3 origin = transform.position;
         float colliderRadius = transform.localScale.x / 2 + offset;
-        
+
         Physics.SphereCast(origin, colliderRadius, Spherecast_direction, out RaycastHit hitInfo, 10000f, layerMask_Wall);
         //Debug.DrawRay(origin, Spherecast_direction * 120, Color.black, 5f, false);
 
         Vector3 destinationElement1 = hitInfo.point;
         Vector3 destination = new Vector3(destinationElement1.x, destinationElement1.y, destinationElement2.z);
         Debug.Log("Destination_Flex" + hitInfo.point);
-        
+
         return destination;
     }
 
@@ -323,7 +381,34 @@ public class Ball : MonoBehaviour
         if (distance > nextMoveDistance + reflectMargin) return;
         Debug.Log("プロセス3");
 
+        //反転の入口***********************************
+        //struckDirection = hitInfo.normal;
+        //count = 0;
+        //toPlayerState = ToPlayerState.Idle;
+        //if (name_ReflectorObject == "Racket0")
+        //{
+        //    strikeState = StrikeState.StruckByPlayer0;
+        //    owner_Ball = Owners.player1; Debug.Log("オーナーチェンジ0  ラケット");
+        //}
+        //else
+        //{
+        //    strikeState = StrikeState.StruckByPlayer1;
+        //    owner_Ball = Owners.player0; Debug.Log("オーナーチェンジ1  ラケット");
+        //}
+        //points = new Vector3[passingPointsVolume + 1];
+        //normals = new Vector3[passingPointsVolume + 1];
+        //points[0] = transform.position;
+        //for (int a = 0; a < passingPointsVolume + 1; a++)
+        //{
+        //    ProcessReflect_Middle(a);
+        //    StartCoroutine(Wait(a));
+        //}
+        R(hitInfo, name_ReflectorObject);
+    }
 
+    private void R(RaycastHit hitInfo, string name_ReflectorObject)
+    {
+        //反転の入口***********************************
         struckDirection = hitInfo.normal;
         count = 0;
         toPlayerState = ToPlayerState.Idle;
@@ -346,8 +431,6 @@ public class Ball : MonoBehaviour
             StartCoroutine(Wait(a));
         }
     }
-
-
 
     [SerializeField] GameObject[] targets_Array = null;
     [SerializeField] List<GameObject> targets_List = null;
