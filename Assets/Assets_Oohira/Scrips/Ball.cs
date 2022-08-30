@@ -229,7 +229,7 @@ public class Ball : MonoBehaviourPunCallbacks
                     //Debug.Log(points[a] + ",  " + normals[a]);
                     //normal = normals[a];
                     //outDirection = (OutDestination_General(inDirection, normal) - points[a]).normalized;
-                    if (PhotonNetwork.IsMasterClient) photonView.RPC(nameof(P2), RpcTarget.All, transform.position, a);
+                    if (PhotonNetwork.IsMasterClient) photonView.RPC(nameof(P2), RpcTarget.All, points[a], a);
                 }
                 else                          //aÇ™1Å`ç≈å„Ç‹Ç≈ÇÃÉãÅ[Év
                 {
