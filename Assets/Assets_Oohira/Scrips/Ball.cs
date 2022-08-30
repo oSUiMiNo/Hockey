@@ -34,15 +34,17 @@ public class Ball : MonoBehaviour
     public MoveState moveState = MoveState.Idle;
     public StrikeState strikeState = StrikeState.Idle;
     public ToPlayerState toPlayerState = ToPlayerState.Idle;
+    public Owners owner_Ball;
 
     Rigidbody rb;
-    [SerializeField] public Owners owner_Ball;
     [SerializeField] bool visualizeSphereCast = false;
     [SerializeField] GameObject sphereCast;
     int randomNumber;
-    [SerializeField] Vector3 firstFource;
+    [SerializeField] private Vector3 firstDirection;
+    [SerializeField] private Vector3 struckDirection;
 
     [SerializeField] float speed = 3;
+    [SerializeField] float margin = 1;
 
     [SerializeField] GameObject racket0;
     [SerializeField] GameObject racket1;
@@ -64,23 +66,27 @@ public class Ball : MonoBehaviour
     }
     private IEnumerator Init()
     {
-        state = State.Wait;
-        yield return new WaitUntil(() => RoomDoorWay.instance.Ready());
+        Random.InitState(System.DateTime.Now.Millisecond);
         moveState = MoveState.First;
+        
+        state = State.Wait;
+        //yield return new WaitUntil(() => RoomDoorWay.instance.Ready());
+        yield return new WaitForSeconds(1);
+        
         racket0 = GameObject.Find("Racket0");
         racket1 = GameObject.Find("Racket1");
         rb = GetComponent<Rigidbody>();
-        Random.InitState(System.DateTime.Now.Millisecond);
         randomNumber = Random.Range(-3, 3);
+        
         points = new Vector3[passingPointsVolume + 1];
-        normals = new Vector3[passingPointsVolume];
-
-        for (int a = 0; a < passingPointsVolume + 1; a++)
+        normals = new Vector3[passingPointsVolume + 1];
+        for (int a = 0; a < passingPointsVolume; a++)
         {
             ProcessReflect_Middle(a);
             StartCoroutine(Wait(a));
         }
-        //StartCoroutine(Wait(passingPointsVolume + 1));
+        StartCoroutine(Wait(passingPointsVolume));
+
         moveState = MoveState.Move;
         state = State.Ready;
     }
@@ -93,112 +99,124 @@ public class Ball : MonoBehaviour
         {
             count = 0;
             points = new Vector3[passingPointsVolume + 1];
-            normals = new Vector3[passingPointsVolume];
-            points[0] = transform.position;
-            for (int b = 0; b < passingPointsVolume + 1; b++)
+            normals = new Vector3[passingPointsVolume + 1];
+            points[0] = transform.position + lastNormal * margin;
+            normals[0] = lastNormal;
+            //normals[0] = new Vector3(0, 0, 1);
+            for (int b = 0; b < passingPointsVolume; b++)
             {
                 ProcessReflect_Middle(b);
                 StartCoroutine(Wait(b));
             }
+            StartCoroutine(Wait(passingPointsVolume));
             moveState = MoveState.Move;
         }
         if (moveState == MoveState.Move) Move();
         if (toPlayerState != ToPlayerState.Idle) Process();
     }
 
-    private Vector3 struckDirection;
     private void ProcessReflect_Middle(int a)
     {
         Color rayColor = Color.white;
         float radius = transform.localScale.x / 2;
         Vector3 outDirection = Vector3.zero;
-        if (a < passingPointsVolume - 1)
+        RaycastHit hitInfo;
+        if (a < passingPointsVolume - 1)                                //最後のカウント以外
         {
-            if (moveState == MoveState.First)
+            if (moveState == MoveState.First)            //ゲーム開始後の一番最初
             {
                 Debug.Log("First  " + a);
                 points[a] = transform.position;
-                //outDirection = new Vector3(randomNumber, randomNumber, randomNumber).normalized;
-                outDirection = firstFource.normalized;  //ここにラケットで打った際の方向を入れる。
+                //outDirection = Vector3.one * randomNumber;
+                outDirection = firstDirection.normalized;
                 moveState = MoveState.Move;
             }
-            else if (strikeState != StrikeState.Idle)
+            else if (strikeState != StrikeState.Idle)    //ラケットで打たれた直後
             {
                 Debug.Log("Middle0  " + a);
                 outDirection = struckDirection.normalized;
             }
-            else
+            else                                         //それ以外
             {
                 Debug.Log("Middle1  " + a);
                 Vector3 inDirection;
                 Vector3 normal;
-                if (a == 0)
+                if (a == 0)                   //aが0の最初のループ
                 {
-                    inDirection = points[a] - lastPoint;
-                    normal = lastNormal;
-                    outDirection = OutDestination_General(inDirection, normal - points[a]).normalized;
+                    inDirection = (points[a] - lastPoint).normalized;
+                    Debug.Log("入射  " + inDirection);
+                    Debug.Log(points[a] + ",  " + normals[a]);
+                    normal = normals[a];
+                    outDirection = (OutDestination_General(inDirection, normal) - points[a]).normalized;
                 }
-                else
+                else                          //aが1～最後までのループ
                 {
-                    inDirection = points[a] - points[a - 1];
-                    normal = normals[a - 1];
+                    inDirection = (points[a] - points[a - 1]).normalized;
+                    Debug.Log("入射  " + inDirection);
+                    normal = normals[a];
                     Vector3 lineDirection = Vector3.zero;
-                    Debug.Log(owner_Ball);
+                    //Debug.Log(owner_Ball);
                     if (owner_Ball == Owners.player1) lineDirection = line1.transform.position - points[1];
                     if (owner_Ball == Owners.player0) lineDirection = line0.transform.position - points[1];
-                    Debug.Log("ラインの方向  " + lineDirection);
+                    //Debug.Log("ラインの方向  " + lineDirection);
                     int divisionVolume = passingPointsVolume - 2;
                     distance_Z = (lineDirection / divisionVolume).z;
                     Vector3 goal_Z = new Vector3(0, 0, points[a].z + distance_Z);
                     outDirection = (OutDestination_Flex(inDirection, normal, goal_Z) - points[a]).normalized;
                 }
             }
-            //Physics.SphereCast(points[a], radius, outDirection, out RaycastHit hitInfo, 10000f, layerMask_Room);
-            //Debug.DrawRay(points[a], outDirection * hitInfo.distance, Color.red, 5f, false);
-            //Instantiate(sphereCast, hitInfo.point, Quaternion.identity);
-            //points[a + 1] = hitInfo.point;
-            //normals[a] = hitInfo.normal;
             rayColor = Color.red;
             strikeState = StrikeState.Idle;
         }
-        else if (a == passingPointsVolume - 1)
+        else if (a == passingPointsVolume - 1)                      //最後のカウントの時
         {
             Debug.Log("Final  " + a);
             outDirection = (GetPlayerTargetPosition() - points[a]).normalized;
             rayColor = Color.blue;
         }
-        Debug.Log("レイ飛ばす方向  " + outDirection);
-        Physics.SphereCast(points[a], radius, outDirection, out RaycastHit hitInfo, 10000f, layerMask_Room);
-        Debug.DrawRay(points[a], outDirection * hitInfo.distance, rayColor, 5f, false);
-        Instantiate(sphereCast, hitInfo.point, Quaternion.identity);
-        Debug.Log("レイ当たった場所  " + hitInfo.point);
-        if (a + 1 < points.Length) points[a + 1] = hitInfo.point;
-        if (a < normals.Length) normals[a] = hitInfo.normal;
+        Debug.Log("レイ飛ばす方向  " + outDirection + ", レイの原点  " + points[a]);
+        Physics.SphereCast(points[a], radius, outDirection, out hitInfo, 10000f, layerMask_Wall);
+        Debug.Log("レイ当たった場所  " + hitInfo.point + ", レイの長さ  " + hitInfo.distance);
+        Debug.DrawRay(points[a], outDirection * hitInfo.distance, rayColor, 8f, false);
+        Debug.DrawRay(points[a], outDirection * 100, Color.green, 2f, false);
+        //Instantiate(sphereCast, hitInfo.point + hitInfo.normal * margin, Quaternion.identity);
+        if (a + 1 < points.Length) Debug.Log("次のインデックス  " + (a + 1));
+        if (a + 1 < points.Length) points[a + 1] = hitInfo.point + hitInfo.normal * margin;
+        if (a + 1 < normals.Length) normals[a + 1] = hitInfo.normal;
     }
     private IEnumerator Wait(int a)
     {
         Debug.Log("Wait0  " + a);
-        yield return new WaitUntil(() => transform.position == points[a]);
-        Debug.Log("Wait1  " + a);
-        count++;
-        if (count == passingPointsVolume)
+        if(count <= passingPointsVolume)   //カウントが0～インデックスの最大+1まで
         {
-            if (owner_Ball == Owners.player0) toPlayerState = ToPlayerState.ToPlayer0;
-            if (owner_Ball == Owners.player1) toPlayerState = ToPlayerState.ToPlayer1;
+            Debug.Log("Wait1-0  " + a);
+            yield return new WaitUntil(() => transform.position == points[a]);
+            Debug.Log("Wait1-1  " + a);
+            count++;
+            Debug.Log("Count  " + count);
+            if (count == passingPointsVolume)
+            {
+                if (owner_Ball == Owners.player0) toPlayerState = ToPlayerState.ToPlayer0;
+                if (owner_Ball == Owners.player1) toPlayerState = ToPlayerState.ToPlayer1;
+            }
         }
         if (count == passingPointsVolume + 1)
         {
+            Debug.Log("Wait2-0  " + a);
+            yield return new WaitUntil(() => transform.position == points[a]);
+            Debug.Log("Wait2-1  " + a);
+            Debug.Log("Count  " + count);
             lastPoint = points[a - 1];
-            lastNormal = normals[a - 1];
+            lastNormal = normals[a];
             Debug.Log("前の最後  " + lastPoint);
             Debug.Log("前の法線  " + lastNormal);
             if (owner_Ball == Owners.player0)
             {
-                owner_Ball = Owners.player1; Debug.Log("オーナーチェンジ0  Wait");
+                owner_Ball = Owners.player1; //Debug.Log("オーナーチェンジ0  Wait");
             }
             else if (owner_Ball == Owners.player1)
             {
-                owner_Ball = Owners.player0; Debug.Log("オーナーチェンジ1  Wait");
+                owner_Ball = Owners.player0; //Debug.Log("オーナーチェンジ1  Wait");
             }
             toPlayerState = ToPlayerState.Idle;
             moveState = MoveState.Reflect;
@@ -209,7 +227,7 @@ public class Ball : MonoBehaviour
         Vector3 goal;
         if (count < passingPointsVolume + 1)
         {
-            Debug.Log("Move  " + count);
+            //Debug.Log("Move  " + count);
             goal = points[count];
             transform.position = Vector3.MoveTowards(transform.position, goal, speed);
         }
@@ -218,32 +236,38 @@ public class Ball : MonoBehaviour
 
     private Vector3 OutDestination_General(Vector3 inDirection, Vector3 contactPointNormal)
     {
-        Debug.Log("反射0  " + inDirection.normalized + ",  " + contactPointNormal);
-        float inNormal_Volume_Magnitude = Vector3.Dot(contactPointNormal, inDirection);
+        float inNormal_Volume_Magnitude = Mathf.Abs(Vector3.Dot(contactPointNormal, inDirection));
 
-        Vector3 inNormal_Volume = inNormal_Volume_Magnitude * contactPointNormal;
+        Vector3 outNormal_Volume = inNormal_Volume_Magnitude * contactPointNormal;
 
-        Vector3 outNormal_Volume = inNormal_Volume * -1;
+        Vector3 inNormal_Volume = outNormal_Volume * -1;
         Vector3 horizontal_Volume = inDirection - inNormal_Volume;
 
         Vector3 Spherecast_direction = Vector3.Normalize(horizontal_Volume + outNormal_Volume);
-        Debug.Log("反射1  " + Spherecast_direction.normalized);
+    
         float offset = Physics.defaultContactOffset * 2;
         Vector3 origin = transform.position;
         float colliderRadius = transform.localScale.x / 2 + offset;
-        Physics.SphereCast(origin, colliderRadius, Spherecast_direction, out RaycastHit hitInfo, 10000f, layerMask_Room);
+        Debug.Log("contactPointNormal  " + contactPointNormal);
+        Debug.Log("inNormal_Volume_Magnitude  " + inNormal_Volume_Magnitude);
+        Debug.Log("inNormal_Volume  " + inNormal_Volume);
+        Debug.Log("outNormal_Volume  " + outNormal_Volume);
+        Debug.Log(Spherecast_direction);
+        Physics.SphereCast(origin, colliderRadius, Spherecast_direction, out RaycastHit hitInfo, 10000f, layerMask_Wall);
+        //Debug.DrawRay(origin, Spherecast_direction * 120, Color.black, 5f, false);
 
         Vector3 destination = hitInfo.point;
-
+        Debug.Log("Destination_Genaral" + hitInfo.point);
+        
         return destination;
     }
     private Vector3 OutDestination_Flex(Vector3 inDirection, Vector3 contactPointNormal, Vector3 destinationElement2)
     {
-        float inNormal_Volume_Magnitude = Vector3.Dot(contactPointNormal, inDirection);
+        float inNormal_Volume_Magnitude = Mathf.Abs(Vector3.Dot(contactPointNormal, inDirection));
 
-        Vector3 inNormal_Volume = inNormal_Volume_Magnitude * contactPointNormal;
+        Vector3 outNormal_Volume = inNormal_Volume_Magnitude * contactPointNormal;
 
-        Vector3 outNormal_Volume = inNormal_Volume * -1;
+        Vector3 inNormal_Volume = outNormal_Volume * -1;
         Vector3 horizontal_Volume = inDirection - inNormal_Volume;
 
         Vector3 Spherecast_direction = Vector3.Normalize(horizontal_Volume + outNormal_Volume);
@@ -251,16 +275,23 @@ public class Ball : MonoBehaviour
         float offset = Physics.defaultContactOffset * 2;
         Vector3 origin = transform.position;
         float colliderRadius = transform.localScale.x / 2 + offset;
-        Physics.SphereCast(origin, colliderRadius, Spherecast_direction, out RaycastHit hitInfo, 10000f, layerMask_Room);
+        Debug.Log("contactPointNormal  " + contactPointNormal);
+        Debug.Log("inNormal_Volume_Magnitude  " + inNormal_Volume_Magnitude);
+        Debug.Log("inNormal_Volume  " + inNormal_Volume);
+        Debug.Log("outNormal_Volume  " + outNormal_Volume);
+        Debug.Log(Spherecast_direction);
+        Physics.SphereCast(origin, colliderRadius, Spherecast_direction, out RaycastHit hitInfo, 10000f, layerMask_Wall);
+        //Debug.DrawRay(origin, Spherecast_direction * 120, Color.black, 5f, false);
 
-        Vector3 destinationElemen1 = hitInfo.point;
-        Vector3 destination = new Vector3(destinationElemen1.x, destinationElemen1.y, destinationElement2.z);
-
+        Vector3 destinationElement1 = hitInfo.point;
+        Vector3 destination = new Vector3(destinationElement1.x, destinationElement1.y, destinationElement2.z);
+        Debug.Log("Destination_Flex" + hitInfo.point);
+        
         return destination;
     }
 
 
-    [SerializeField] LayerMask layerMask_Room;
+    [SerializeField] LayerMask layerMask_Wall;
     [SerializeField] LayerMask layerMask_Racket_Collider;
     [SerializeField] List<GameObject> sphereCasts = new List<GameObject>();
     [SerializeField] int count_ProcessForwardDetection = 0;
@@ -315,7 +346,7 @@ public class Ball : MonoBehaviour
             owner_Ball = Owners.player0; Debug.Log("オーナーチェンジ1  ラケット");
         }
         points = new Vector3[passingPointsVolume + 1];
-        normals = new Vector3[passingPointsVolume];
+        normals = new Vector3[passingPointsVolume + 1];
         points[0] = transform.position;
         for (int a = 0; a < passingPointsVolume + 1; a++)
         {
@@ -336,6 +367,7 @@ public class Ball : MonoBehaviour
             //Debug.Log("ゴールリスト作る1" + goal);
             //Debug.Log("ゴールリスト作る2" + GetComponent<Reflector_Racket>().playerIdentification);
             //Debug.Log("ゴールリスト作る2" + goal.GetComponent<Goal>().playerIdentification);
+            //Debug.Log(aim.GetComponent<Owner>().player + ",  " + owner_Ball);
             if (aim.GetComponent<Owner>().player == owner_Ball)
             {
                 targets_List.Add(aim);
@@ -343,8 +375,9 @@ public class Ball : MonoBehaviour
         }
 
         int index_Random = Random.Range(0, targets_List.Count);
+        //Debug.Log("ランダムなターゲットのインデックス  " + index_Random);
         Vector3 targetPosition_Random = targets_List[index_Random].transform.position;
-        Debug.Log("プレイヤーに行く0" + targetPosition_Random);
+        //Debug.Log("プレイヤーに行く0" + targetPosition_Random);
 
         targets_List.Clear();
         return targetPosition_Random;
