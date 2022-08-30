@@ -44,7 +44,7 @@ public class RoomDoorWay : MonoBehaviourPunCallbacks
     {
         tryingConectingToMasterServer = true;
         isConectedToMasterServer = false;
-        //Debug.Log("マスターサーバーへの接続を試みます");
+        Debug.Log("マスターサーバーへの接続を試みます");
         PhotonNetwork.ConnectUsingSettings();
     }
     public void Join()
@@ -55,31 +55,31 @@ public class RoomDoorWay : MonoBehaviourPunCallbacks
         //PhotonNetwork.NickName = gameManager.playerName;
         //後で実装*****************************************************
 
-        //Debug.Log("ランダムなルームへの参加を試みます");
+        Debug.Log("ランダムなルームへの参加を試みます");
         PhotonNetwork.JoinRandomRoom();  // ランダムなルームに参加する
     }
 
     public void Leave()
     {
-        //Debug.Log("ルームからの退出を試みます");
+        Debug.Log("ルームからの退出を試みます");
         PhotonNetwork.LeaveRoom();
     }
 
 
     public override void OnConnectedToMaster()
     {
-        //Debug.Log("マスターサーバーに接続しました");
+        Debug.Log("マスターサーバーに接続しました");
         tryingConectingToMasterServer = false;
         isConectedToMasterServer = true;
     }
 
     public override void OnDisconnected(DisconnectCause cause)
     {
-        //Debug.Log("Photonサーバーから切断しました");
+        Debug.Log("Photonサーバーから切断しました");
         //Debug.Log(cause);
         tryingConectingToMasterServer = true;
         isConectedToMasterServer = false;
-        //Debug.Log("再度マスターサーバーへの接続を試みます");
+        Debug.Log("再度マスターサーバーへの接続を試みます");
         PhotonNetwork.ConnectUsingSettings();
     }
 
@@ -96,7 +96,7 @@ public class RoomDoorWay : MonoBehaviourPunCallbacks
     private bool masterIsBlue = false;
     public override void OnJoinedRoom()
     {
-        //Debug.Log("ルームに参加しました");
+        Debug.Log("ルームに参加しました");
 
         //後で実装*****************************************************
         //GivePlayers();
@@ -142,12 +142,12 @@ public class RoomDoorWay : MonoBehaviourPunCallbacks
 
     public override void OnLeftRoom()
     {
-        //Debug.Log("ルームから退出しました");
+        Debug.Log("ルームから退出しました");
     }
 
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
-        //Debug.Log(newPlayer + " が参加しました");
+        Debug.Log(newPlayer + " が参加しました");
 
         //後で実装*****************************************************
         //GivePlayers();
@@ -178,7 +178,7 @@ public class RoomDoorWay : MonoBehaviourPunCallbacks
     [PunRPC]
     public void LockAction(GameObject masterAvatar)
     {
-        //Debug.Log("LockAction");
+        Debug.Log("LockAction");
         if (masterAvatar.GetPhotonView().Owner.IsMasterClient)
         {
             //後で実装*****************************************************
