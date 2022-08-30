@@ -85,15 +85,6 @@ public class Ball : MonoBehaviourPunCallbacks
         randomNumber = Random.Range(-3, 3);
 
         Reversal();
-        //count = 0;
-        //points = new Vector3[passingPointsVolume + 1];
-        //normals = new Vector3[passingPointsVolume + 1];
-        //for (int a = 0; a < passingPointsVolume; a++)
-        //{
-        //    ProcessReflect_Middle(a);
-        //    StartCoroutine(Wait(a));
-        //}
-        //StartCoroutine(Wait(passingPointsVolume));
 
         moveState = MoveState.Move;
         state = State.Ready;
@@ -103,20 +94,11 @@ public class Ball : MonoBehaviourPunCallbacks
     private void FixedUpdate()
     {
         if (state != State.Ready) return;
+        
         if (moveState == MoveState.Reflect)
         {
             Reversal();
-            //count = 0;
-            //points = new Vector3[passingPointsVolume + 1];
-            //normals = new Vector3[passingPointsVolume + 1];
-            //points[0] = transform.position + lastNormal * margin;
-            //normals[0] = lastNormal;
-            //for (int b = 0; b < passingPointsVolume; b++)
-            //{
-            //    ProcessReflect_Middle(b);
-            //    StartCoroutine(Wait(b));
-            //}
-            //StartCoroutine(Wait(passingPointsVolume));
+            
             moveState = MoveState.Move;
         }
         if (moveState == MoveState.Move) Move();
@@ -130,6 +112,7 @@ public class Ball : MonoBehaviourPunCallbacks
         normals = new Vector3[passingPointsVolume + 1];
         points[0] = transform.position + lastNormal * margin;
         normals[0] = lastNormal;
+        StartCoroutine(Wait(0));
         for (int a = 0; a < passingPointsVolume; a++)
         {
             ProcessReflect_Middle(a);
@@ -142,7 +125,8 @@ public class Ball : MonoBehaviourPunCallbacks
     [PunRPC]
     private void P1(Vector3 position, int a)
     {
-        transform.position = position; 
+        transform.position = position;
+        transform.position = points[0];
 
         //反転の入口***********************************
         moveState = MoveState.Move;
@@ -153,6 +137,7 @@ public class Ball : MonoBehaviourPunCallbacks
     private void P2(Vector3 position, int a)
     {
         transform.position = position;
+        transform.position = points[0];
 
         //反転の入口***********************************
         outDirection = struckDirection.normalized;
@@ -161,6 +146,7 @@ public class Ball : MonoBehaviourPunCallbacks
     private void P3(Vector3 position, int a)
     {
         transform.position = position;
+        transform.position = points[0];
 
         //反転の入口***********************************
         Vector3 inDirection = (points[0] - lastPoint).normalized;
@@ -368,11 +354,11 @@ public class Ball : MonoBehaviourPunCallbacks
     [SerializeField] int count_ProcessForwardDetection = 0;
     private void Process()
     {
-        ProcessForwardDetection("Racket1", layerMask_Racket_Collider, 2f);
-        ProcessForwardDetection("Racket0", layerMask_Racket_Collider, 1f);
+        ProcessRacketDetection("Racket1", layerMask_Racket_Collider, 2f);
+        ProcessRacketDetection("Racket0", layerMask_Racket_Collider, 1f);
         count_ProcessForwardDetection = 0;
     }
-    private void ProcessForwardDetection(string name_ReflectorObject, LayerMask layerMask, float reflectMargin)
+    private void ProcessRacketDetection(string name_ReflectorObject, LayerMask layerMask, float reflectMargin)
     {
         Vector3 velocity = rb.velocity;
 
@@ -445,15 +431,8 @@ public class Ball : MonoBehaviourPunCallbacks
             strikeState = StrikeState.StruckByPlayer1;
             owner_Ball = Owners.player0; Debug.Log("オーナーチェンジ1  ラケット");
         }
+        
         Reversal();
-        //points = new Vector3[passingPointsVolume + 1];
-        //normals = new Vector3[passingPointsVolume + 1];
-        //points[0] = transform.position;
-        //for (int a = 0; a < passingPointsVolume + 1; a++)
-        //{
-        //    ProcessReflect_Middle(a);
-        //    StartCoroutine(Wait(a));
-        //}
     }
 
     [SerializeField] GameObject[] targets_Array = null;
