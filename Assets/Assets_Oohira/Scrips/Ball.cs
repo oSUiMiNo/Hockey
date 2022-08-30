@@ -147,6 +147,7 @@ public class Ball : MonoBehaviourPunCallbacks
             }
         }
     }
+    [PunRPC]
     private void P1(int a)
     {
         //”½“]‚Ì“üŒû***********************************
@@ -155,6 +156,7 @@ public class Ball : MonoBehaviourPunCallbacks
         outDirection = firstDirection.normalized;
         moveState = MoveState.Move;
     }
+    [PunRPC]
     private void P2(int a)
     {
         Vector3 inDirection;
@@ -166,6 +168,7 @@ public class Ball : MonoBehaviourPunCallbacks
         normal = normals[a];
         outDirection = (OutDestination_General(inDirection, normal) - points[a]).normalized;
     }
+    [PunRPC]
     private void W(int a)
     {
         //”½“]‚Ì“üŒû***********************************
