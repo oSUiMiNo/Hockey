@@ -10,7 +10,9 @@ public class Ball : MonoBehaviourPunCallbacks
     private enum State
     {
         Wait,
-        Ready
+        Ready,
+        Init,
+        Update
     }
     public enum MoveState
     {
@@ -74,6 +76,7 @@ public class Ball : MonoBehaviourPunCallbacks
         state = State.Wait;
         yield return new WaitUntil(() => RoomDoorWay.instance.Ready());
         //yield return new WaitForSeconds(1);
+
         line0 = GameObject.Find("Lines_Player0");
         line1 = GameObject.Find("Lines_Player1");
         racket0 = GameObject.Find("Racket0");
@@ -81,14 +84,16 @@ public class Ball : MonoBehaviourPunCallbacks
         rb = GetComponent<Rigidbody>();
         randomNumber = Random.Range(-3, 3);
 
-        points = new Vector3[passingPointsVolume + 1];
-        normals = new Vector3[passingPointsVolume + 1];
-        for (int a = 0; a < passingPointsVolume; a++)
-        {
-            ProcessReflect_Middle(a);
-            StartCoroutine(Wait(a));
-        }
-        StartCoroutine(Wait(passingPointsVolume));
+        Reversal();
+        //count = 0;
+        //points = new Vector3[passingPointsVolume + 1];
+        //normals = new Vector3[passingPointsVolume + 1];
+        //for (int a = 0; a < passingPointsVolume; a++)
+        //{
+        //    ProcessReflect_Middle(a);
+        //    StartCoroutine(Wait(a));
+        //}
+        //StartCoroutine(Wait(passingPointsVolume));
 
         moveState = MoveState.Move;
         state = State.Ready;
@@ -100,77 +105,73 @@ public class Ball : MonoBehaviourPunCallbacks
         if (state != State.Ready) return;
         if (moveState == MoveState.Reflect)
         {
-            count = 0;
-            points = new Vector3[passingPointsVolume + 1];
-            normals = new Vector3[passingPointsVolume + 1];
-            points[0] = transform.position + lastNormal * margin;
-            normals[0] = lastNormal;
-            //normals[0] = new Vector3(0, 0, 1);
-            for (int b = 0; b < passingPointsVolume; b++)
-            {
-                ProcessReflect_Middle(b);
-                StartCoroutine(Wait(b));
-            }
-            StartCoroutine(Wait(passingPointsVolume));
+            Reversal();
+            //count = 0;
+            //points = new Vector3[passingPointsVolume + 1];
+            //normals = new Vector3[passingPointsVolume + 1];
+            //points[0] = transform.position + lastNormal * margin;
+            //normals[0] = lastNormal;
+            //for (int b = 0; b < passingPointsVolume; b++)
+            //{
+            //    ProcessReflect_Middle(b);
+            //    StartCoroutine(Wait(b));
+            //}
+            //StartCoroutine(Wait(passingPointsVolume));
             moveState = MoveState.Move;
         }
         if (moveState == MoveState.Move) Move();
         if (toPlayerState != ToPlayerState.Idle) Process();
     }
 
-    private void P(int a)
+    private void Reversal()
     {
-        if (a < passingPointsVolume - 1)
+        count = 0;
+        points = new Vector3[passingPointsVolume + 1];
+        normals = new Vector3[passingPointsVolume + 1];
+        points[0] = transform.position + lastNormal * margin;
+        normals[0] = lastNormal;
+        for (int a = 0; a < passingPointsVolume; a++)
         {
-            if (moveState == MoveState.First)
-            {
-                //îΩì]ÇÃì¸å˚***********************************
-                Debug.Log("First  " + a);
-                points[a] = transform.position;
-                outDirection = firstDirection.normalized;
-                moveState = MoveState.Move;
-            }
+            ProcessReflect_Middle(a);
+            StartCoroutine(Wait(a));
         }
-
-        if (a >= passingPointsVolume - 1 && strikeState == StrikeState.Idle)
-        {
-            Vector3 inDirection;
-            Vector3 normal;
-            if (a == 0)                   //aÇ™0ÇÃç≈èâÇÃÉãÅ[Év
-            {
-                //îΩì]ÇÃì¸å˚***********************************
-                inDirection = (points[a] - lastPoint).normalized;
-                Debug.Log("ì¸éÀ  " + inDirection);
-                Debug.Log(points[a] + ",  " + normals[a]);
-                normal = normals[a];
-                outDirection = (OutDestination_General(inDirection, normal) - points[a]).normalized;
-            }
-        }
+        StartCoroutine(Wait(passingPointsVolume));
     }
+
+   
     [PunRPC]
     private void P1(Vector3 position, int a)
     {
         transform.position = position; 
 
         //îΩì]ÇÃì¸å˚***********************************
-        Debug.Log("First  " + a);
-        points[a] = transform.position;
-        outDirection = firstDirection.normalized;
         moveState = MoveState.Move;
+        
+        //points[0] = transform.position;
+        outDirection = firstDirection.normalized;
     }
     [PunRPC]
     private void P2(Vector3 position, int a)
     {
         transform.position = position;
 
-        Vector3 inDirection;
-        Vector3 normal;
         //îΩì]ÇÃì¸å˚***********************************
-        inDirection = (points[a] - lastPoint).normalized;
-        Debug.Log("ì¸éÀ  " + inDirection);
-        Debug.Log(points[a] + ",  " + normals[a]);
-        normal = normals[a];
-        outDirection = (OutDestination_General(inDirection, normal) - points[a]).normalized;
+        outDirection = struckDirection.normalized;
+    }
+        [PunRPC]
+    private void P3(Vector3 position, int a)
+    {
+        transform.position = position;
+
+        //points[0] = transform.position + lastNormal * margin;
+        //normals[0] = lastNormal;
+
+        //îΩì]ÇÃì¸å˚***********************************
+        Vector3 inDirection = (points[0] - lastPoint).normalized;
+        //normal = normals[0];
+        outDirection = (OutDestination_General(inDirection, normals[0]) - points[0]).normalized;
+        //Debug.Log("ì¸éÀ  " + inDirection);
+        //Debug.Log(points[0] + ",  " + normals[0]);
     }
     [PunRPC]
     private void W(Vector3 position, int a)
@@ -204,8 +205,8 @@ public class Ball : MonoBehaviourPunCallbacks
         {
             if (moveState == MoveState.First)            //ÉQÅ[ÉÄäJénå„ÇÃàÍî‘ç≈èâ
             {
+                Debug.Log("First  " + a);
                 //îΩì]ÇÃì¸å˚***********************************
-                //Debug.Log("First  " + a);
                 //points[a] = transform.position;
                 //outDirection = firstDirection.normalized;
                 //moveState = MoveState.Move;
@@ -214,13 +215,13 @@ public class Ball : MonoBehaviourPunCallbacks
             else if (strikeState != StrikeState.Idle)    //ÉâÉPÉbÉgÇ≈ë≈ÇΩÇÍÇΩíºå„
             {
                 Debug.Log("Middle0  " + a);
-                outDirection = struckDirection.normalized;
+                //îΩì]ÇÃì¸å˚***********************************
+                //outDirection = struckDirection.normalized;
+                if (PhotonNetwork.IsMasterClient) photonView.RPC(nameof(P2), RpcTarget.All, points[a], a);
             }
             else                                         //ÇªÇÍà»äO
             {
                 Debug.Log("Middle1  " + a);
-                Vector3 inDirection;
-                Vector3 normal;
                 if (a == 0)                   //aÇ™0ÇÃç≈èâÇÃÉãÅ[Év
                 {
                     //îΩì]ÇÃì¸å˚***********************************
@@ -229,13 +230,13 @@ public class Ball : MonoBehaviourPunCallbacks
                     //Debug.Log(points[a] + ",  " + normals[a]);
                     //normal = normals[a];
                     //outDirection = (OutDestination_General(inDirection, normal) - points[a]).normalized;
-                    if (PhotonNetwork.IsMasterClient) photonView.RPC(nameof(P2), RpcTarget.All, points[a], a);
+                    if (PhotonNetwork.IsMasterClient) photonView.RPC(nameof(P3), RpcTarget.All, points[a], a);
                 }
                 else                          //aÇ™1Å`ç≈å„Ç‹Ç≈ÇÃÉãÅ[Év
                 {
-                    inDirection = (points[a] - points[a - 1]).normalized;
+                    Vector3 inDirection = (points[a] - points[a - 1]).normalized;
                     Debug.Log("ì¸éÀ  " + inDirection);
-                    normal = normals[a];
+                    //normal = normals[a];
                     Vector3 lineDirection = Vector3.zero;
                     //Debug.Log(owner_Ball);
                     if (owner_Ball == Owners.player1) lineDirection = line1.transform.position - points[1];
@@ -244,7 +245,7 @@ public class Ball : MonoBehaviourPunCallbacks
                     int divisionVolume = passingPointsVolume - 2;
                     distance_Z = (lineDirection / divisionVolume).z;
                     Vector3 goal_Z = new Vector3(0, 0, points[a].z + distance_Z);
-                    outDirection = (OutDestination_Flex(inDirection, normal, goal_Z) - points[a]).normalized;
+                    outDirection = (OutDestination_Flex(inDirection, normals[a], goal_Z) - points[a]).normalized;
                 }
             }
             rayColor = Color.red;
