@@ -213,7 +213,7 @@ public class RoomDoorWay : MonoBehaviourPunCallbacks
                 avatar_0 = true;
             if (GameObject.Find("Avatar1(Clone)"))
                 avatar_1 = true;
-            if (GameObject.Find("Ball(Clone)"))
+            if (GameObject.Find("Ball_New(Clone)"))
                 ball_ = true;
         }
     }
