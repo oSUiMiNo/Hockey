@@ -248,11 +248,7 @@ public class Ball : MonoBehaviour
         float offset = Physics.defaultContactOffset * 2;
         Vector3 origin = transform.position;
         float colliderRadius = transform.localScale.x / 2 + offset;
-        Debug.Log("contactPointNormal  " + contactPointNormal);
-        Debug.Log("inNormal_Volume_Magnitude  " + inNormal_Volume_Magnitude);
-        Debug.Log("inNormal_Volume  " + inNormal_Volume);
-        Debug.Log("outNormal_Volume  " + outNormal_Volume);
-        Debug.Log(Spherecast_direction);
+     
         Physics.SphereCast(origin, colliderRadius, Spherecast_direction, out RaycastHit hitInfo, 10000f, layerMask_Wall);
         //Debug.DrawRay(origin, Spherecast_direction * 120, Color.black, 5f, false);
 
@@ -275,11 +271,7 @@ public class Ball : MonoBehaviour
         float offset = Physics.defaultContactOffset * 2;
         Vector3 origin = transform.position;
         float colliderRadius = transform.localScale.x / 2 + offset;
-        Debug.Log("contactPointNormal  " + contactPointNormal);
-        Debug.Log("inNormal_Volume_Magnitude  " + inNormal_Volume_Magnitude);
-        Debug.Log("inNormal_Volume  " + inNormal_Volume);
-        Debug.Log("outNormal_Volume  " + outNormal_Volume);
-        Debug.Log(Spherecast_direction);
+        
         Physics.SphereCast(origin, colliderRadius, Spherecast_direction, out RaycastHit hitInfo, 10000f, layerMask_Wall);
         //Debug.DrawRay(origin, Spherecast_direction * 120, Color.black, 5f, false);
 
@@ -330,7 +322,6 @@ public class Ball : MonoBehaviour
         if (distance > nextMoveDistance + reflectMargin) return;
         Debug.Log("プロセス3");
 
-        //rb.velocity = hitInfo.normal * 50f;
 
         struckDirection = hitInfo.normal;
         count = 0;
@@ -364,10 +355,6 @@ public class Ball : MonoBehaviour
         targets_Array = GameObject.FindGameObjectsWithTag("Targets");
         foreach (GameObject aim in targets_Array)
         {
-            //Debug.Log("ゴールリスト作る1" + goal);
-            //Debug.Log("ゴールリスト作る2" + GetComponent<Reflector_Racket>().playerIdentification);
-            //Debug.Log("ゴールリスト作る2" + goal.GetComponent<Goal>().playerIdentification);
-            //Debug.Log(aim.GetComponent<Owner>().player + ",  " + owner_Ball);
             if (aim.GetComponent<Owner>().player == owner_Ball)
             {
                 targets_List.Add(aim);
@@ -375,9 +362,7 @@ public class Ball : MonoBehaviour
         }
 
         int index_Random = Random.Range(0, targets_List.Count);
-        //Debug.Log("ランダムなターゲットのインデックス  " + index_Random);
         Vector3 targetPosition_Random = targets_List[index_Random].transform.position;
-        //Debug.Log("プレイヤーに行く0" + targetPosition_Random);
 
         targets_List.Clear();
         return targetPosition_Random;
