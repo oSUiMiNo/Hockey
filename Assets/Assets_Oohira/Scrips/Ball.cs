@@ -421,14 +421,14 @@ public class Ball : MonoBehaviourPunCallbacks
         //    ProcessReflect_Middle(a);
         //    StartCoroutine(Wait(a));
         //}
-        if (PhotonNetwork.IsMasterClient) photonView.RPC(nameof(R), RpcTarget.All, hitInfo, name_ReflectorObject);
+        if (PhotonNetwork.IsMasterClient) photonView.RPC(nameof(R), RpcTarget.All, hitInfo.normal, name_ReflectorObject);
     }
 
     [PunRPC]
-    private void R(RaycastHit hitInfo, string name_ReflectorObject)
+    private void R(Vector3 struckDirection, string name_ReflectorObject)
     {
         //”½“]‚Ì“üŒû***********************************
-        struckDirection = hitInfo.normal;
+        this.struckDirection = struckDirection;
         count = 0;
         toPlayerState = ToPlayerState.Idle;
         if (name_ReflectorObject == "Racket0")
