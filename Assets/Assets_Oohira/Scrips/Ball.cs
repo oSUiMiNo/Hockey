@@ -126,7 +126,7 @@ public class Ball : MonoBehaviourPunCallbacks
     private void P1(Vector3 position, int a)
     {
         transform.position = position;
-        transform.position = points[0];
+        //transform.position = points[0];
 
         //”½“]‚Ì“üŒû***********************************
         moveState = MoveState.Move;
@@ -137,7 +137,7 @@ public class Ball : MonoBehaviourPunCallbacks
     private void P2(Vector3 position, int a)
     {
         transform.position = position;
-        transform.position = points[0];
+        //transform.position = points[0];
 
         //”½“]‚Ì“üŒû***********************************
         outDirection = struckDirection.normalized;
@@ -146,7 +146,7 @@ public class Ball : MonoBehaviourPunCallbacks
     private void P3(Vector3 position, int a)
     {
         transform.position = position;
-        transform.position = points[0];
+        //transform.position = points[0];
 
         //”½“]‚Ì“üŒû***********************************
         Vector3 inDirection = (points[0] - lastPoint).normalized;
