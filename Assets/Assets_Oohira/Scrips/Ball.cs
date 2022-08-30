@@ -147,7 +147,6 @@ public class Ball : MonoBehaviourPunCallbacks
         //反転の入口***********************************
         moveState = MoveState.Move;
         
-        //points[0] = transform.position;
         outDirection = firstDirection.normalized;
     }
     [PunRPC]
@@ -163,15 +162,10 @@ public class Ball : MonoBehaviourPunCallbacks
     {
         transform.position = position;
 
-        //points[0] = transform.position + lastNormal * margin;
-        //normals[0] = lastNormal;
-
         //反転の入口***********************************
         Vector3 inDirection = (points[0] - lastPoint).normalized;
-        //normal = normals[0];
+
         outDirection = (OutDestination_General(inDirection, normals[0]) - points[0]).normalized;
-        //Debug.Log("入射  " + inDirection);
-        //Debug.Log(points[0] + ",  " + normals[0]);
     }
     [PunRPC]
     private void W(Vector3 position, int a)
@@ -235,16 +229,14 @@ public class Ball : MonoBehaviourPunCallbacks
                 else                          //aが1～最後までのループ
                 {
                     Vector3 inDirection = (points[a] - points[a - 1]).normalized;
-                    Debug.Log("入射  " + inDirection);
-                    //normal = normals[a];
+                    
                     Vector3 lineDirection = Vector3.zero;
-                    //Debug.Log(owner_Ball);
                     if (owner_Ball == Owners.player1) lineDirection = line1.transform.position - points[1];
                     if (owner_Ball == Owners.player0) lineDirection = line0.transform.position - points[1];
-                    //Debug.Log("ラインの方向  " + lineDirection);
                     int divisionVolume = passingPointsVolume - 2;
                     distance_Z = (lineDirection / divisionVolume).z;
                     Vector3 goal_Z = new Vector3(0, 0, points[a].z + distance_Z);
+                    
                     outDirection = (OutDestination_Flex(inDirection, normals[a], goal_Z) - points[a]).normalized;
                 }
             }
@@ -440,9 +432,9 @@ public class Ball : MonoBehaviourPunCallbacks
         transform.position = position;
 
         //反転の入口***********************************
+        toPlayerState = ToPlayerState.Idle;
         this.struckDirection = struckDirection;
         count = 0;
-        toPlayerState = ToPlayerState.Idle;
         if (name_ReflectorObject == "Racket0")
         {
             strikeState = StrikeState.StruckByPlayer0;
@@ -453,14 +445,15 @@ public class Ball : MonoBehaviourPunCallbacks
             strikeState = StrikeState.StruckByPlayer1;
             owner_Ball = Owners.player0; Debug.Log("オーナーチェンジ1  ラケット");
         }
-        points = new Vector3[passingPointsVolume + 1];
-        normals = new Vector3[passingPointsVolume + 1];
-        points[0] = transform.position;
-        for (int a = 0; a < passingPointsVolume + 1; a++)
-        {
-            ProcessReflect_Middle(a);
-            StartCoroutine(Wait(a));
-        }
+        Reversal();
+        //points = new Vector3[passingPointsVolume + 1];
+        //normals = new Vector3[passingPointsVolume + 1];
+        //points[0] = transform.position;
+        //for (int a = 0; a < passingPointsVolume + 1; a++)
+        //{
+        //    ProcessReflect_Middle(a);
+        //    StartCoroutine(Wait(a));
+        //}
     }
 
     [SerializeField] GameObject[] targets_Array = null;
