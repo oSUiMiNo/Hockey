@@ -70,8 +70,8 @@ public class Ball : MonoBehaviour
         moveState = MoveState.First;
         
         state = State.Wait;
-        //yield return new WaitUntil(() => RoomDoorWay.instance.Ready());
-        yield return new WaitForSeconds(1);
+        yield return new WaitUntil(() => RoomDoorWay.instance.Ready());
+        //yield return new WaitForSeconds(1);
         
         racket0 = GameObject.Find("Racket0");
         racket1 = GameObject.Find("Racket1");
