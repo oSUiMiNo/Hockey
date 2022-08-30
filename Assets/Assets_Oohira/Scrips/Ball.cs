@@ -110,7 +110,7 @@ public class Ball : MonoBehaviourPunCallbacks
         photonView.RPC(nameof(Reversal_0), RpcTarget.All, transform.position + lastNormal * margin, lastNormal);
 
         yield return new WaitForSeconds(1);
-        for (int a = 0; a < passingPointsVolume; a++)
+        for (int a = 1; a < passingPointsVolume; a++)
         {
             ProcessReflect_Middle(a);
             StartCoroutine(Wait(a));
@@ -129,7 +129,7 @@ public class Ball : MonoBehaviourPunCallbacks
         points[0] = point_0;
         normals[0] = normal_0;
 
-       ProcessReflect_Middle(0);
+        ProcessReflect_Middle(0);
         StartCoroutine(Wait(0));
     }
 
