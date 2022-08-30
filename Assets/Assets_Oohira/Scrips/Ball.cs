@@ -84,7 +84,7 @@ public class Ball : MonoBehaviourPunCallbacks
         rb = GetComponent<Rigidbody>();
         randomNumber = Random.Range(-3, 3);
 
-        Reversal();
+        StartCoroutine(Reversal());
 
         moveState = MoveState.Move;
         state = State.Ready;
@@ -94,35 +94,47 @@ public class Ball : MonoBehaviourPunCallbacks
     private void FixedUpdate()
     {
         if (state != State.Ready) return;
-        
-        if (moveState == MoveState.Reflect)
-        {
-            Reversal();
-            
-            moveState = MoveState.Move;
-        }
+        if (moveState == MoveState.Reflect) StartCoroutine(Reversal());
         if (moveState == MoveState.Move) Move();
         if (toPlayerState != ToPlayerState.Idle) Process();
     }
 
-    private void Reversal()
+    private IEnumerator Reversal()
     {
-        count = 0;
-        points = new Vector3[passingPointsVolume + 1];
-        normals = new Vector3[passingPointsVolume + 1];
-        points[0] = transform.position + lastNormal * margin;
-        normals[0] = lastNormal;
-        StartCoroutine(Wait(0));
+        //count = 0;
+        //points = new Vector3[passingPointsVolume + 1];
+        //normals = new Vector3[passingPointsVolume + 1];
+        //points[0] = transform.position + lastNormal * margin;
+        //normals[0] = lastNormal;
+     
+        photonView.RPC(nameof(Reversal_0), RpcTarget.All, transform.position + lastNormal * margin, lastNormal);
+
+        yield return new WaitForSeconds(1);
         for (int a = 0; a < passingPointsVolume; a++)
         {
             ProcessReflect_Middle(a);
             StartCoroutine(Wait(a));
         }
         StartCoroutine(Wait(passingPointsVolume));
+
+        moveState = MoveState.Move;
     }
 
-   
     [PunRPC]
+    private void Reversal_0(Vector3 point_0, Vector3 normal_0)
+    {
+        count = 0;
+        points = new Vector3[passingPointsVolume + 1];
+        normals = new Vector3[passingPointsVolume + 1];
+        points[0] = point_0;
+        normals[0] = normal_0;
+
+       ProcessReflect_Middle(0);
+        StartCoroutine(Wait(0));
+    }
+
+
+        [PunRPC]
     private void P1(Vector3 position, int a)
     {
         transform.position = position;
@@ -432,7 +444,7 @@ public class Ball : MonoBehaviourPunCallbacks
             owner_Ball = Owners.player0; Debug.Log("オーナーチェンジ1  ラケット");
         }
         
-        Reversal();
+        StartCoroutine(Reversal());
     }
 
     [SerializeField] GameObject[] targets_Array = null;
