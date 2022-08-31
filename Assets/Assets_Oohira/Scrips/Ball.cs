@@ -109,7 +109,7 @@ public class Ball : MonoBehaviourPunCallbacks
 
         photonView.RPC(nameof(Reversal_0), RpcTarget.All, transform.position + lastNormal * margin, lastNormal);
 
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(3);
         for (int a = 1; a < passingPointsVolume; a++)
         {
             ProcessReflect_Middle(a);
@@ -197,7 +197,7 @@ public class Ball : MonoBehaviourPunCallbacks
         {
             if (moveState == MoveState.First)            //ゲーム開始後の一番最初
             {
-                Debug.Log("First  " + a);
+                //Debug.Log("First  " + a);
                 //反転の入口***********************************
                 moveState = MoveState.Move;
                 outDirection = firstDirection.normalized;
@@ -205,14 +205,14 @@ public class Ball : MonoBehaviourPunCallbacks
             }
             else if (strikeState != StrikeState.Idle)    //ラケットで打たれた直後
             {
-                Debug.Log("Middle0  " + a);
+                //Debug.Log("Middle0  " + a);
                 //反転の入口***********************************
                 outDirection = struckDirection.normalized;
                 //if (PhotonNetwork.IsMasterClient) photonView.RPC(nameof(P2), RpcTarget.All, points[a], a);
             }
             else                                         //それ以外
             {
-                Debug.Log("Middle1  " + a);
+                //Debug.Log("Middle1  " + a);
                 if (a == 0)                   //aが0の最初のループ
                 {
                     //反転の入口***********************************
@@ -239,30 +239,30 @@ public class Ball : MonoBehaviourPunCallbacks
         }
         else if (a == passingPointsVolume - 1)                      //最後のカウントの時
         {
-            Debug.Log("Final  " + a);
+            //Debug.Log("Final  " + a);
             outDirection = (GetPlayerTargetPosition() - points[a]).normalized;
             rayColor = Color.blue;
         }
-        Debug.Log("レイ飛ばす方向  " + outDirection + ", レイの原点  " + points[a]);
+        //Debug.Log("レイ飛ばす方向  " + outDirection + ", レイの原点  " + points[a]);
         Physics.SphereCast(points[a], radius, outDirection, out hitInfo, 10000f, layerMask_Wall);
-        Debug.Log("レイ当たった場所  " + hitInfo.point + ", レイの長さ  " + hitInfo.distance);
+        //Debug.Log("レイ当たった場所  " + hitInfo.point + ", レイの長さ  " + hitInfo.distance);
         Debug.DrawRay(points[a], outDirection * hitInfo.distance, rayColor, 8f, false);
         Debug.DrawRay(points[a], outDirection * 100, Color.green, 2f, false);
         //Instantiate(sphereCast, hitInfo.point + hitInfo.normal * margin, Quaternion.identity);
-        if (a + 1 < points.Length) Debug.Log("次のインデックス  " + (a + 1));
+        //if (a + 1 < points.Length) Debug.Log("次のインデックス  " + (a + 1));
         if (a + 1 < points.Length) points[a + 1] = hitInfo.point + hitInfo.normal * margin;
         if (a + 1 < normals.Length) normals[a + 1] = hitInfo.normal;
     }
     private IEnumerator Wait(int a)
     {
-        Debug.Log("Wait0  " + a);
+        //Debug.Log("Wait0  " + a);
         if (count <= passingPointsVolume)   //カウントが0～インデックスの最大+1まで
         {
-            Debug.Log("Wait1-0  " + a);
+            //Debug.Log("Wait1-0  " + a);
             yield return new WaitUntil(() => transform.position == points[a]);
-            Debug.Log("Wait1-1  " + a);
+            //Debug.Log("Wait1-1  " + a);
             count++;
-            Debug.Log("Count  " + count);
+            //Debug.Log("Count  " + count);
             if (count == passingPointsVolume)
             {
                 if (owner_Ball == Owners.player0) toPlayerState = ToPlayerState.ToPlayer0;
@@ -273,10 +273,10 @@ public class Ball : MonoBehaviourPunCallbacks
         //反転の入口***********************************
         if (count == passingPointsVolume + 1)
         {
-            Debug.Log("Wait2-0  " + a);
+            //Debug.Log("Wait2-0  " + a);
             yield return new WaitUntil(() => transform.position == points[a]);
-            Debug.Log("Wait2-1  " + a);
-            Debug.Log("Count  " + count);
+            //Debug.Log("Wait2-1  " + a);
+            //Debug.Log("Count  " + count);
 
             //lastPoint = points[a - 1];
             //lastNormal = normals[a];
@@ -297,6 +297,7 @@ public class Ball : MonoBehaviourPunCallbacks
     }
     private void Move()
     {
+        Debug.Log("Move");
         Vector3 goal;
         if (count < passingPointsVolume + 1)
         {
@@ -326,7 +327,7 @@ public class Ball : MonoBehaviourPunCallbacks
         //Debug.DrawRay(origin, Spherecast_direction * 120, Color.black, 5f, false);
 
         Vector3 destination = hitInfo.point;
-        Debug.Log("Destination_Genaral" + hitInfo.point);
+        //Debug.Log("Destination_Genaral" + hitInfo.point);
 
         return destination;
     }
@@ -350,7 +351,7 @@ public class Ball : MonoBehaviourPunCallbacks
 
         Vector3 destinationElement1 = hitInfo.point;
         Vector3 destination = new Vector3(destinationElement1.x, destinationElement1.y, destinationElement2.z);
-        Debug.Log("Destination_Flex" + hitInfo.point);
+        //Debug.Log("Destination_Flex" + hitInfo.point);
 
         return destination;
     }
