@@ -84,7 +84,7 @@ public class Ball : MonoBehaviourPunCallbacks
         rb = GetComponent<Rigidbody>();
         randomNumber = Random.Range(-3, 3);
 
-        StartCoroutine(Reversal());
+        if(PhotonNetwork.IsMasterClient) StartCoroutine(Reversal());
 
         moveState = MoveState.Move;
         state = State.Ready;
@@ -94,7 +94,7 @@ public class Ball : MonoBehaviourPunCallbacks
     private void FixedUpdate()
     {
         if (state != State.Ready) return;
-        if (moveState == MoveState.Reflect) StartCoroutine(Reversal());
+        if (moveState == MoveState.Reflect || PhotonNetwork.IsMasterClient) StartCoroutine(Reversal());
         if (moveState == MoveState.Move) Move();
         if (toPlayerState != ToPlayerState.Idle) Process();
     }
@@ -106,7 +106,7 @@ public class Ball : MonoBehaviourPunCallbacks
         //normals = new Vector3[passingPointsVolume + 1];
         //points[0] = transform.position + lastNormal * margin;
         //normals[0] = lastNormal;
-     
+
         photonView.RPC(nameof(Reversal_0), RpcTarget.All, transform.position + lastNormal * margin, lastNormal);
 
         yield return new WaitForSeconds(1);
@@ -444,7 +444,7 @@ public class Ball : MonoBehaviourPunCallbacks
             owner_Ball = Owners.player0; Debug.Log("オーナーチェンジ1  ラケット");
         }
         
-        StartCoroutine(Reversal());
+        if(PhotonNetwork.IsMasterClient) StartCoroutine(Reversal());
     }
 
     [SerializeField] GameObject[] targets_Array = null;
