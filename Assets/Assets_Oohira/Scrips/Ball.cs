@@ -86,7 +86,7 @@ public class Ball : MonoBehaviourPunCallbacks
 
         if(PhotonNetwork.IsMasterClient) StartCoroutine(Reversal());
 
-        moveState = MoveState.Move;
+        //moveState = MoveState.Move;
         state = State.Ready;
     }
 
@@ -199,7 +199,7 @@ public class Ball : MonoBehaviourPunCallbacks
             {
                 //Debug.Log("First  " + a);
                 //”½“]‚Ì“üŒû***********************************
-                moveState = MoveState.Move;
+                //moveState = MoveState.Move;
                 outDirection = firstDirection.normalized;
                 //if (PhotonNetwork.IsMasterClient) photonView.RPC(nameof(P1), RpcTarget.All, transform.position, a);
             }
