@@ -136,35 +136,35 @@ public class Ball : MonoBehaviourPunCallbacks
     }
 
 
-        [PunRPC]
-    private void P1(Vector3 position, int a)
-    {
-        transform.position = position;
-        //transform.position = points[0];
+    //    [PunRPC]
+    //private void P1(Vector3 position, int a)
+    //{
+    //    transform.position = position;
+    //    //transform.position = points[0];
 
-        //”½“]‚Ì“üŒû***********************************
-        moveState = MoveState.Move;
-        outDirection = firstDirection.normalized;
-    }
-    [PunRPC]
-    private void P2(Vector3 position, int a)
-    {
-        transform.position = position;
-        //transform.position = points[0];
+    //    //”½“]‚Ì“üŒû***********************************
+    //    moveState = MoveState.Move;
+    //    outDirection = firstDirection.normalized;
+    //}
+    //[PunRPC]
+    //private void P2(Vector3 position, int a)
+    //{
+    //    transform.position = position;
+    //    //transform.position = points[0];
 
-        //”½“]‚Ì“üŒû***********************************
-        outDirection = struckDirection.normalized;
-    }
-        [PunRPC]
-    private void P3(Vector3 position, int a)
-    {
-        transform.position = position;
-        //transform.position = points[0];
+    //    //”½“]‚Ì“üŒû***********************************
+    //    outDirection = struckDirection.normalized;
+    //}
+    //    [PunRPC]
+    //private void P3(Vector3 position, int a)
+    //{
+    //    transform.position = position;
+    //    //transform.position = points[0];
 
-        //”½“]‚Ì“üŒû***********************************
-        Vector3 inDirection = (points[0] - lastPoint).normalized;
-        outDirection = (OutDestination_General(inDirection, normals[0]) - points[0]).normalized;
-    }
+    //    //”½“]‚Ì“üŒû***********************************
+    //    Vector3 inDirection = (points[0] - lastPoint).normalized;
+    //    outDirection = (OutDestination_General(inDirection, normals[0]) - points[0]).normalized;
+    //}
     [PunRPC]
     private void W(Vector3 position, int a)
     {
@@ -418,10 +418,11 @@ public class Ball : MonoBehaviourPunCallbacks
         //    ProcessReflect_Middle(a);
         //    StartCoroutine(Wait(a));
         //}
-        if(PhotonNetwork.IsMasterClient) photonView.RPC(nameof(R), RpcTarget.All, transform.position, hitInfo.normal, name_ReflectorObject);
+        //if(PhotonNetwork.IsMasterClient) photonView.RPC(nameof(R), RpcTarget.All, transform.position, hitInfo.normal, name_ReflectorObject);
+        R(transform.position, hitInfo.normal, name_ReflectorObject);
     }
 
-    [PunRPC]
+   // [PunRPC]
     private void R(Vector3 position, Vector3 struckDirection, string name_ReflectorObject)
     {
         transform.position = position;
