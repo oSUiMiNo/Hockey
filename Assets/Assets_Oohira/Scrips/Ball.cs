@@ -247,7 +247,7 @@ public class Ball : MonoBehaviourPunCallbacks
         Physics.SphereCast(points[a], radius, outDirection, out hitInfo, 10000f, layerMask_Wall);
         //Debug.Log("レイ当たった場所  " + hitInfo.point + ", レイの長さ  " + hitInfo.distance);
         Debug.DrawRay(points[a], outDirection * hitInfo.distance, rayColor, 8f, false);
-        Debug.DrawRay(points[a], outDirection * 100, Color.green, 2f, false);
+        Debug.DrawRay(points[a], outDirection * 5, Color.green, 2f, false);
         //Instantiate(sphereCast, hitInfo.point + hitInfo.normal * margin, Quaternion.identity);
         //if (a + 1 < points.Length) Debug.Log("次のインデックス  " + (a + 1));
         if (a + 1 < points.Length) points[a + 1] = hitInfo.point + hitInfo.normal * margin;
