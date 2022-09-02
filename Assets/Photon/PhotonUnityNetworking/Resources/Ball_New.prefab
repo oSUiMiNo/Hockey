@@ -84,6 +84,7 @@ MonoBehaviour:
   normals: []
   lastPoint: {x: 0, y: 0, z: 0}
   lastNormal: {x: 0, y: 0, z: 0}
+  "\u53CD\u8EE2\u3057\u305F\u56DE\u6570": 0
   player0Ready: 0
   player1Ready: 0
   layerMask_Wall:

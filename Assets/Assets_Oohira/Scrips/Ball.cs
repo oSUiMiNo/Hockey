@@ -69,6 +69,8 @@ public class Ball : MonoBehaviourPunCallbacks
 
     [SerializeField] private Vector3 lastPoint;
     [SerializeField] private Vector3 lastNormal;
+
+    [SerializeField] private int ”½“]‚µ‚½‰ñ”;
     void Start()
     {
         StartCoroutine(Init());
@@ -127,15 +129,17 @@ public class Ball : MonoBehaviourPunCallbacks
 
     private IEnumerator Reversal()
     {
-        if(PhotonNetwork.IsMasterClient) photonView.RPC(nameof(Reversal_0), RpcTarget.All, transform.position + lastNormal * margin, lastNormal);
+        if (state != State.BothReady) ”½“]‚µ‚½‰ñ”++;
+        Debug.Log("”½“]‚µ‚½‰ñ”" + ”½“]‚µ‚½‰ñ”);
 
-
+        if (PhotonNetwork.IsMasterClient) photonView.RPC(nameof(Reversal_0), RpcTarget.All, transform.position + lastNormal * margin, lastNormal);
 
         Debug.Log("”½“]‚Ì‰Šú‰»0");
         yield return new WaitUntil(() => moveState == MoveState.Idle);
         if (PhotonNetwork.IsMasterClient) photonView.RPC(nameof(Reversal_1), RpcTarget.All);
         Debug.Log("”½“]‚Ì‰Šú‰»1");
 
+     
         //Debug.Log("”½“]‚Ì‰Šú‰»1");
         //for (int a = 1; a < passingPointsVolume; a++)
         //{
@@ -240,7 +244,7 @@ public class Ball : MonoBehaviourPunCallbacks
         Debug.Log("ƒŒƒC“–‚½‚Á‚½êŠ  " + hitInfo.point + ", ƒŒƒC‚Ì’·‚³  " + hitInfo.distance);
         Debug.DrawRay(points[a], outDirection * hitInfo.distance, rayColor, 8f, false);
         Debug.DrawRay(points[a], outDirection * 5, Color.green, 2f, false);
-        //Instantiate(sphereCast, hitInfo.point + hitInfo.normal * margin, Quaternion.identity);
+        Instantiate(sphereCast, hitInfo.point + hitInfo.normal * margin, Quaternion.identity);
         //if (a + 1 < points.Length) Debug.Log("Ÿ‚ÌƒCƒ“ƒfƒbƒNƒX  " + (a + 1));
         if (a + 1 < points.Length) points[a + 1] = hitInfo.point + hitInfo.normal * margin;
         if (a + 1 < normals.Length) normals[a + 1] = hitInfo.normal;
