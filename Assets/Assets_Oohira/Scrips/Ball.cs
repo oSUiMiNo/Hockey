@@ -91,6 +91,7 @@ public class Ball : MonoBehaviourPunCallbacks
         line1 = GameObject.Find("Lines_Player1");
         racket0 = GameObject.Find("Racket0");
         racket1 = GameObject.Find("Racket1");
+        sphereCast = GameObject.Find("Sphere");
         rb = GetComponent<Rigidbody>();
         randomNumber = UnityEngine.Random.Range(-3, 3);
 
