@@ -273,28 +273,10 @@ public class Ball : MonoBehaviourPunCallbacks
             //Debug.Log("Wait2-0  " + a);
             yield return new WaitUntil(() => transform.position == points[a]);
             //Debug.Log("Wait2-1  " + a);
-            //Debug.Log("Count  " + count);
-
-            //lastPoint = points[a - 1];
-            //lastNormal = normals[a];
-            //Debug.Log("前の最後  " + lastPoint);
-            //Debug.Log("前の法線  " + lastNormal);
-            //if (owner_Ball == Owners.player0)
-            //{
-            //    owner_Ball = Owners.player1; //Debug.Log("オーナーチェンジ0  Wait");
-            //}
-            //else if (owner_Ball == Owners.player1)
-            //{
-            //    owner_Ball = Owners.player0; //Debug.Log("オーナーチェンジ1  Wait");
-            //}
-            //toPlayerState = ToPlayerState.Idle;
-            //moveState = MoveState.Reflect;
-
             string owner;
             if (owner_Ball == Owners.player0) owner = "player1";
             else                              owner = "player0";
 
-            Debug.Log("Wへ");
             if (PhotonNetwork.IsMasterClient) photonView.RPC(nameof(W), RpcTarget.All, "Reflect", owner, "Idle", points[a - 1], normals[a]);
         }
     }
@@ -308,8 +290,8 @@ public class Ball : MonoBehaviourPunCallbacks
         this.moveState = M;
         this.owner_Ball = O;
         this.toPlayerState = T;
-        this.lastPoint = lastPoint;
-        this.lastNormal = lastNormal;
+        this.lastPoint = lastPoint;  //前の最後
+        this.lastNormal = lastNormal;  //前の法線
     }
 
     private void Move()
@@ -443,13 +425,14 @@ public class Ball : MonoBehaviourPunCallbacks
         {
             strike = "StruckByPlayer0";
             owner = "player1";
+            if (!PhotonNetwork.IsMasterClient) photonView.RPC(nameof(R), RpcTarget.All, strike, owner, "Idle", hitInfo.normal);
         }
         else
         {
             strike = "StruckByPlayer1";
             owner = "player0";
+            if (PhotonNetwork.IsMasterClient) photonView.RPC(nameof(R), RpcTarget.All, strike, owner, "Idle", hitInfo.normal);
         }
-        if (PhotonNetwork.IsMasterClient) photonView.RPC(nameof(R), RpcTarget.All, strike, owner, "Idle", hitInfo.normal);
     }
 
     [PunRPC]
