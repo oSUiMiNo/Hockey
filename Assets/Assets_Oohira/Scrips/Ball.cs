@@ -193,12 +193,12 @@ public class Ball : MonoBehaviourPunCallbacks
         ProcessReflect_Middle(0);
         StartCoroutine(Wait(0));
         reflectAngle = Vector3.Angle(new Vector3(0, 0, 1), outDirection);
-        if (reflectAngle <= 70) passingPointsVolume = 8;
-        else if (reflectAngle <= 60) passingPointsVolume = 7;
-        else if (reflectAngle <= 50) passingPointsVolume = 6;
-        else if (reflectAngle <= 40) passingPointsVolume = 5;
-        else if (reflectAngle <= 30) passingPointsVolume = 4;
-        else if (reflectAngle <= 20) passingPointsVolume = 3;
+        if (reflectAngle >= 70) passingPointsVolume = 8;
+        else if (reflectAngle >= 60) passingPointsVolume = 7;
+        else if (reflectAngle >= 50) passingPointsVolume = 6;
+        else if (reflectAngle >= 40) passingPointsVolume = 5;
+        else if (reflectAngle >= 30) passingPointsVolume = 4;
+        else if (reflectAngle >= 20) passingPointsVolume = 3;
         else passingPointsVolume = 2;
 
         moveState = MoveState.Idle;
