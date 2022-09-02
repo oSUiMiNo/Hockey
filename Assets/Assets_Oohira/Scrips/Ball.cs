@@ -6,6 +6,7 @@ using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
+using DG.Tweening; 
 
 public class Ball : MonoBehaviourPunCallbacks
 {
@@ -121,7 +122,7 @@ public class Ball : MonoBehaviourPunCallbacks
         state = State.BothReady;
     }
     [PunRPC]
-    private void BothReady(string player)
+    private void BothReady(string player)  //‚±‚¢‚Â‚ÍŒã‚ÅƒQ[ƒ€ƒ}ƒl[ƒWƒƒ[‚ÉˆÚA‚·‚é
     {
         if (player == "player1") player1Ready = true;
         else                     player0Ready = true;
@@ -132,7 +133,7 @@ public class Ball : MonoBehaviourPunCallbacks
     {
         if (state != State.Ready) return;
         if (moveState == MoveState.Reflect) StartCoroutine(Reversal());
-        if (moveState == MoveState.Move) Move();
+        //if (moveState == MoveState.Move) Move();
         if (toPlayerState != ToPlayerState.Idle) Process();
     }
 
@@ -146,37 +147,6 @@ public class Ball : MonoBehaviourPunCallbacks
         yield return new WaitUntil(() => moveState == MoveState.Idle);
         if (PhotonNetwork.IsMasterClient) photonView.RPC(nameof(Reversal_1), RpcTarget.All);
     }
-
-    //[PunRPC]
-    //private void Reversal_0(Vector3 point_0, Vector3 normal_0)
-    //{
-    //    transform.position = point_0;
-
-    //    count = 0;
-
-    //    points = new Vector3[passingPointsVolume + 1];
-    //    normals = new Vector3[passingPointsVolume + 1];
-    //    points[0] = point_0;
-    //    normals[0] = normal_0;
-    //    ProcessReflect_Middle(0);
-    //    StartCoroutine(Wait(0));
-    //    float reflectAngle = Vector3.Angle(new Vector3(0, 0, 1), outDirection);
-    //    if (reflectAngle <= 70)      passingPointsVolume = 8;
-    //    else if (reflectAngle <= 60) passingPointsVolume = 7;
-    //    else if (reflectAngle <= 50) passingPointsVolume = 6;
-    //    else if (reflectAngle <= 40) passingPointsVolume = 5;
-    //    else if (reflectAngle <= 30) passingPointsVolume = 4;
-    //    else if (reflectAngle <= 20) passingPointsVolume = 3;
-    //    else                         passingPointsVolume = 2;
-    //    points = new Vector3[passingPointsVolume + 1];
-    //    normals = new Vector3[passingPointsVolume + 1];
-    //    points[0] = point_0;
-    //    normals[0] = normal_0;
-
-    //    moveState = MoveState.Idle;
-
-    //}
-
    
     [PunRPC]
     private void Reversal_0(Vector3 point_0, Vector3 normal_0)
@@ -308,6 +278,7 @@ public class Ball : MonoBehaviourPunCallbacks
                 if (owner_Ball == Owners.player0) toPlayerState = ToPlayerState.ToPlayer0;
                 if (owner_Ball == Owners.player1) toPlayerState = ToPlayerState.ToPlayer1;
             }
+            Move1();
         }
 
         //”½“]‚Ì“üŒû***********************************
@@ -346,6 +317,17 @@ public class Ball : MonoBehaviourPunCallbacks
             //Debug.Log("Move  " + count);
             goal = points[count];
             transform.position = Vector3.MoveTowards(transform.position, goal, speed);
+        }
+    }
+
+    private void Move1()
+    {
+        Vector3 goal;
+        if (count < passingPointsVolume + 1)
+        {
+            //Debug.Log("Move  " + count);
+            goal = points[count];
+            this.transform.DOMove(goal, 2f).SetEase(Ease.Linear);
         }
     }
 
