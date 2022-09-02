@@ -175,6 +175,7 @@ public class Ball : MonoBehaviourPunCallbacks
     //}
 
     [SerializeField] private float reflectAngle;
+    [SerializeField] private Vector3 positiveZAxis;
 
     [PunRPC]
     private void Reversal_0(Vector3 point_0, Vector3 normal_0)
@@ -192,7 +193,11 @@ public class Ball : MonoBehaviourPunCallbacks
         normals.Add(normal_0);
         ProcessReflect_Middle(0);
         StartCoroutine(Wait(0));
-        reflectAngle = Vector3.Angle(new Vector3(0, 0, 1), outDirection);
+
+        if (owner_Ball == Owners.player0) positiveZAxis.z = -1;
+        else                              positiveZAxis.z = 1;
+
+        reflectAngle = Vector3.Angle(positiveZAxis, outDirection);
         if (reflectAngle >= 70) passingPointsVolume = 8;
         else if (reflectAngle >= 60) passingPointsVolume = 7;
         else if (reflectAngle >= 50) passingPointsVolume = 6;
