@@ -103,11 +103,6 @@ public class Ball : MonoBehaviourPunCallbacks
 
     private IEnumerator Reversal()
     {
-        //count = 0;
-        //points = new Vector3[passingPointsVolume + 1];
-        //normals = new Vector3[passingPointsVolume + 1];
-        //points[0] = transform.position + lastNormal * margin;
-        //normals[0] = lastNormal;
         if(PhotonNetwork.IsMasterClient) photonView.RPC(nameof(Reversal_0), RpcTarget.All, transform.position + lastNormal * margin, lastNormal);
         //Reversal_0(transform.position + lastNormal * margin, lastNormal);
 
@@ -136,39 +131,11 @@ public class Ball : MonoBehaviourPunCallbacks
 
         ProcessReflect_Middle(0);
         StartCoroutine(Wait(0));
+
+        moveState = MoveState.Idle;
     }
 
 
-    //    [PunRPC]
-    //private void P1(Vector3 position, int a)
-    //{
-    //    transform.position = position;
-    //    //transform.position = points[0];
-
-    //    //îΩì]ÇÃì¸å˚***********************************
-    //    moveState = MoveState.Move;
-    //    outDirection = firstDirection.normalized;
-    //}
-    //[PunRPC]
-    //private void P2(Vector3 position, int a)
-    //{
-    //    transform.position = position;
-    //    //transform.position = points[0];
-
-    //    //îΩì]ÇÃì¸å˚***********************************
-    //    outDirection = struckDirection.normalized;
-    //}
-    //    [PunRPC]
-    //private void P3(Vector3 position, int a)
-    //{
-    //    transform.position = position;
-    //    //transform.position = points[0];
-
-    //    //îΩì]ÇÃì¸å˚***********************************
-    //    Vector3 inDirection = (points[0] - lastPoint).normalized;
-    //    outDirection = (OutDestination_General(inDirection, normals[0]) - points[0]).normalized;
-    //}
-   
 
     Vector3 outDirection = Vector3.zero;
     private void ProcessReflect_Middle(int a)
@@ -182,17 +149,13 @@ public class Ball : MonoBehaviourPunCallbacks
             {
                 Debug.Log("First  " + a);
                 //îΩì]ÇÃì¸å˚***********************************
-                moveState = MoveState.Idle;
                 outDirection = firstDirection.normalized;
-                //if (PhotonNetwork.IsMasterClient) photonView.RPC(nameof(P1), RpcTarget.All, transform.position, a);
             }
             else if (strikeState != StrikeState.Idle)    //ÉâÉPÉbÉgÇ≈ë≈ÇΩÇÍÇΩíºå„
             {
                 Debug.Log("Middle0  " + a);
                 //îΩì]ÇÃì¸å˚***********************************
-                moveState = MoveState.Idle;
                 outDirection = struckDirection.normalized;
-                //if (PhotonNetwork.IsMasterClient) photonView.RPC(nameof(P2), RpcTarget.All, points[a], a);
             }
             else                                         //ÇªÇÍà»äO
             {
@@ -200,10 +163,8 @@ public class Ball : MonoBehaviourPunCallbacks
                 if (a == 0)                   //aÇ™0ÇÃç≈èâÇÃÉãÅ[Év
                 {
                     //îΩì]ÇÃì¸å˚***********************************
-                    moveState = MoveState.Idle;
                     Vector3 inDirection = (points[0] - lastPoint).normalized;
                     outDirection = (OutDestination_General(inDirection, normals[0]) - points[0]).normalized;
-                    //if (PhotonNetwork.IsMasterClient) photonView.RPC(nameof(P3), RpcTarget.All, points[a], a);
                 }
                 else                          //aÇ™1Å`ç≈å„Ç‹Ç≈ÇÃÉãÅ[Év
                 {
@@ -277,8 +238,13 @@ public class Ball : MonoBehaviourPunCallbacks
             //}
             //toPlayerState = ToPlayerState.Idle;
             //moveState = MoveState.Reflect;
+
+            string owner;
+            if (owner_Ball == Owners.player0) owner = "player1";
+            else                              owner = "player0";
+
             Debug.Log("WÇ÷");
-            if (PhotonNetwork.IsMasterClient) photonView.RPC(nameof(W), RpcTarget.All, "Reflect", "player1", "Idle", points[a - 1], normals[a]);
+            if (PhotonNetwork.IsMasterClient) photonView.RPC(nameof(W), RpcTarget.All, "Reflect", owner, "Idle", points[a - 1], normals[a]);
         }
     }
     [PunRPC]
@@ -419,18 +385,47 @@ public class Ball : MonoBehaviourPunCallbacks
         //    StartCoroutine(Wait(a));
         //}
         //if(PhotonNetwork.IsMasterClient) photonView.RPC(nameof(R), RpcTarget.All, transform.position, hitInfo.normal, name_ReflectorObject);
-        R(transform.position, hitInfo.normal, name_ReflectorObject);
+        //R(transform.position, hitInfo.normal, name_ReflectorObject);
+
+        string strike;
+        string owner;
+        if (name_ReflectorObject == "Racket0")
+        {
+            strike = "StruckByPlayer0";
+            owner = "player1";
+        }
+        else
+        {
+            strike = "StruckByPlayer1";
+            owner = "player0";
+        }
+        if (PhotonNetwork.IsMasterClient) photonView.RPC(nameof(RR), RpcTarget.All, strike, owner, "Idle", hitInfo.normal);
     }
 
-   // [PunRPC]
+    [PunRPC]
+    private void RR(string strikeState, string owner_Ball,string toPlayerState, Vector3 struckDirection)
+    {
+        Enum.TryParse(strikeState, out StrikeState S); Debug.Log(S);
+        Enum.TryParse(owner_Ball, out Owners O); Debug.Log(O);
+        Enum.TryParse(toPlayerState, out ToPlayerState T); Debug.Log(T);
+        this.strikeState = S;
+        this.owner_Ball = O;
+        this.toPlayerState = T;
+
+        this.struckDirection = struckDirection;
+
+        StartCoroutine(Reversal());
+    }
+
+
+
     private void R(Vector3 position, Vector3 struckDirection, string name_ReflectorObject)
     {
-        transform.position = position;
 
         //îΩì]ÇÃì¸å˚***********************************
         toPlayerState = ToPlayerState.Idle;
         this.struckDirection = struckDirection;
-        count = 0;
+
         if (name_ReflectorObject == "Racket0")
         {
             strikeState = StrikeState.StruckByPlayer0;
