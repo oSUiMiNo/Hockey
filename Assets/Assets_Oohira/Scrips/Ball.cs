@@ -131,6 +131,8 @@ public class Ball : MonoBehaviourPunCallbacks
         //Reversal_0(transform.position + lastNormal * margin, lastNormal);
 
         yield return new WaitUntil(() => a && b);
+        a = false;
+        b = false;
         moveState = MoveState.Idle;
 
         Debug.Log("”½“]‚Ì‰Šú‰»0");
