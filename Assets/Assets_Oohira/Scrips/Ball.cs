@@ -123,7 +123,7 @@ public class Ball : MonoBehaviourPunCallbacks
         moveState = MoveState.Move;
     }
 
-    //[PunRPC]
+    [PunRPC]
     private void Reversal_0(Vector3 point_0, Vector3 normal_0)
     {
         transform.position = point_0;
