@@ -130,17 +130,20 @@ public class Ball : MonoBehaviourPunCallbacks
         if(PhotonNetwork.IsMasterClient) photonView.RPC(nameof(Reversal_0), RpcTarget.All, transform.position + lastNormal * margin, lastNormal);
         //Reversal_0(transform.position + lastNormal * margin, lastNormal);
 
+        Debug.Log("”½“]‚Ì‰Šú‰»0");
         yield return new WaitUntil(() => moveState == MoveState.Idle);
-        if (PhotonNetwork.IsMasterClient) photonView.RPC(nameof(Reversal_1), RpcTarget.All);
+        //if (PhotonNetwork.IsMasterClient) photonView.RPC(nameof(Reversal_1), RpcTarget.All);
 
-        //for (int a = 1; a < passingPointsVolume; a++)
-        //{
-        //    ProcessReflect_Middle(a);
-        //    StartCoroutine(Wait(a));
-        //}
-        //StartCoroutine(Wait(passingPointsVolume));
-
-            //moveState = MoveState.Move;
+        Debug.Log("”½“]‚Ì‰Šú‰»1");
+        for (int a = 1; a < passingPointsVolume; a++)
+        {
+            ProcessReflect_Middle(a);
+            StartCoroutine(Wait(a));
+        }
+        StartCoroutine(Wait(passingPointsVolume));
+        Debug.Log("”½“]‚Ì‰Šú‰»2");
+        moveState = MoveState.Move;
+        Debug.Log("”½“]‚Ì‰Šú‰»3");
     }
 
     [PunRPC]
