@@ -235,7 +235,7 @@ public class Ball : MonoBehaviourPunCallbacks
         Color rayColor = Color.white;
         float radius = transform.localScale.x / 2;
         RaycastHit hitInfo;
-        if (a < passingPointsVolume - 1)                                //最後のカウント以外
+        if (a < passingPointsVolume - 1 && passingPointsVolume != 1)                                //最後のカウント以外
         {
             if (moveState == MoveState.First)            //ゲーム開始後の一番最初
             {
