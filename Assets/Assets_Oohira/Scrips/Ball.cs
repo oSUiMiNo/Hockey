@@ -148,7 +148,6 @@ public class Ball : MonoBehaviourPunCallbacks
         //Debug.Log("”½“]‚Ì‰Šú‰»3");
     }
 
-    [SerializeField] bool a, b;
     [PunRPC]
     private void Reversal_0(Vector3 point_0, Vector3 normal_0)
     {
