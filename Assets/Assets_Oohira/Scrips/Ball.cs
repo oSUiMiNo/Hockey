@@ -130,9 +130,11 @@ public class Ball : MonoBehaviourPunCallbacks
         if(PhotonNetwork.IsMasterClient) photonView.RPC(nameof(Reversal_0), RpcTarget.All, transform.position + lastNormal * margin, lastNormal);
         //Reversal_0(transform.position + lastNormal * margin, lastNormal);
 
+        yield return new WaitUntil(() => a && b);
+        moveState = MoveState.Idle;
+
         Debug.Log("”½“]‚Ì‰Šú‰»0");
         yield return new WaitUntil(() => moveState == MoveState.Idle);
-        yield return new WaitForSeconds(1f);
 
         Debug.Log("”½“]‚Ì‰Šú‰»1");
         for (int a = 1; a < passingPointsVolume; a++)
@@ -146,6 +148,7 @@ public class Ball : MonoBehaviourPunCallbacks
         Debug.Log("”½“]‚Ì‰Šú‰»3");
     }
 
+    [SerializeField] bool a, b;
     [PunRPC]
     private void Reversal_0(Vector3 point_0, Vector3 normal_0)
     {
@@ -160,8 +163,19 @@ public class Ball : MonoBehaviourPunCallbacks
         ProcessReflect_Middle(0);
         StartCoroutine(Wait(0));
 
-        moveState = MoveState.Idle;
+        if (PhotonNetwork.IsMasterClient) photonView.RPC(nameof(Bo), RpcTarget.All, "player1");
+        else photonView.RPC(nameof(Bo), RpcTarget.All, "player0");
+
+       // moveState = MoveState.Idle;
+
     }
+    [PunRPC]
+    private void Bo(string player)
+    {
+        if (player == "player1") a = true;
+        else                     b = true;
+    }
+
 
 
     Vector3 outDirection = Vector3.zero;
