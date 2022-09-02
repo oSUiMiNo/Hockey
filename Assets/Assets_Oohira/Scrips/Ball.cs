@@ -13,6 +13,7 @@ public class Ball : MonoBehaviourPunCallbacks
     {
         Wait,
         Ready,
+        BothReady,
         Init,
         Update
     }
@@ -41,6 +42,8 @@ public class Ball : MonoBehaviourPunCallbacks
     public StrikeState strikeState = StrikeState.Idle;
     public ToPlayerState toPlayerState = ToPlayerState.Idle;
     public Owners owner_Ball;
+
+
 
     Rigidbody rb;
     [SerializeField] bool visualizeSphereCast = false;
@@ -93,10 +96,21 @@ public class Ball : MonoBehaviourPunCallbacks
         state = State.Ready;
     }
 
+    [SerializeField] private bool player0Ready = false;
+    [SerializeField] private bool player1Ready = false;
+    private bool ConfirmPreparation()
+    {
+        if (PhotonNetwork.IsMasterClient && Input.GetKeyDown(KeyCode.Z))  player1Ready = true;
+        if (!PhotonNetwork.IsMasterClient && Input.GetKeyDown(KeyCode.Z)) player0Ready = true;
+        
+        if (player0Ready && player1Ready) return true;
+        else                              return false;
+    }
 
     private void FixedUpdate()
     {
         if (state != State.Ready) return;
+        if (!ConfirmPreparation()) return;
         if (moveState == MoveState.Reflect) StartCoroutine(Reversal());
         if (moveState == MoveState.Move) Move();
         if (toPlayerState != ToPlayerState.Idle) Process();
