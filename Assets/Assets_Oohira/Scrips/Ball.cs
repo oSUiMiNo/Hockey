@@ -150,7 +150,7 @@ public class Ball : MonoBehaviourPunCallbacks
     //    transform.position = point_0;
 
     //    count = 0;
-        
+
     //    points = new Vector3[passingPointsVolume + 1];
     //    normals = new Vector3[passingPointsVolume + 1];
     //    points[0] = point_0;
@@ -173,6 +173,9 @@ public class Ball : MonoBehaviourPunCallbacks
     //    moveState = MoveState.Idle;
 
     //}
+
+    [SerializeField] private float reflectAngle;
+
     [PunRPC]
     private void Reversal_0(Vector3 point_0, Vector3 normal_0)
     {
@@ -189,7 +192,7 @@ public class Ball : MonoBehaviourPunCallbacks
         normals.Add(normal_0);
         ProcessReflect_Middle(0);
         StartCoroutine(Wait(0));
-        float reflectAngle = Vector3.Angle(new Vector3(0, 0, 1), outDirection);
+        reflectAngle = Vector3.Angle(new Vector3(0, 0, 1), outDirection);
         if (reflectAngle <= 70) passingPointsVolume = 8;
         else if (reflectAngle <= 60) passingPointsVolume = 7;
         else if (reflectAngle <= 50) passingPointsVolume = 6;
