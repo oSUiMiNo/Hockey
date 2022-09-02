@@ -456,13 +456,13 @@ public class Ball : MonoBehaviourPunCallbacks
         //    StartCoroutine(Wait(a));
         //}
 
-        Debug.Log("ラケット" + name_ReflectorObject);
+
         if (toPlayerState == ToPlayerState.ToPlayer0)
         {
             if (PhotonNetwork.IsMasterClient)
             {
                 Debug.Log("WWW0");
-                photonView.RPC(nameof(W), RpcTarget.All, "StruckByPlayer0", "player1", "Idle", Vector3.zero, Vector3.zero, hitInfo.normal);
+                photonView.RPC(nameof(W), RpcTarget.All, "StruckByPlayer0", "player1", Vector3.zero, Vector3.zero, hitInfo.normal);
             }
         }
         if(toPlayerState == ToPlayerState.ToPlayer1)
@@ -470,22 +470,24 @@ public class Ball : MonoBehaviourPunCallbacks
             if (!PhotonNetwork.IsMasterClient)
             {
                 Debug.Log("WWW1");
-                photonView.RPC(nameof(W), RpcTarget.All, "StruckByPlayer1", "player0", "Idle", Vector3.zero, Vector3.zero, hitInfo.normal);
+                photonView.RPC(nameof(W), RpcTarget.All, "StruckByPlayer1", "player0", Vector3.zero, Vector3.zero, hitInfo.normal);
             }
         }
     }
 
+    
+
     [PunRPC]
-    private void W(string strikeState, string owner_Ball, string toPlayerState, Vector3 lastPoint, Vector3 lastNormal, Vector3 struckDirection)
+    private void W(string strikeState, string owner_Ball,  Vector3 lastPoint, Vector3 lastNormal, Vector3 struckDirection)
     {
+        toPlayerState = ToPlayerState.Idle;
+
         Debug.Log("WWW2");
         Enum.TryParse(strikeState, out StrikeState S); Debug.Log(S);
         Enum.TryParse(owner_Ball, out Owners O); Debug.Log(O);
-        Enum.TryParse(toPlayerState, out ToPlayerState T); Debug.Log(T);
 
         this.strikeState = S;
         this.owner_Ball = O;
-        this.toPlayerState = T;
 
         this.lastPoint = lastPoint;  //前の最後
         this.lastNormal = lastNormal;  //前の法線
