@@ -132,7 +132,7 @@ public class Ball : MonoBehaviourPunCallbacks
     private void FixedUpdate()
     {
         if (state != State.Ready) return;
-        if (moveState == MoveState.Reflect) StartCoroutine(Reversal());
+        //if (moveState == MoveState.Reflect) StartCoroutine(Reversal());
         //if (moveState == MoveState.Move) Move();
         if (toPlayerState != ToPlayerState.Idle) Process();
     }
@@ -287,26 +287,16 @@ public class Ball : MonoBehaviourPunCallbacks
             //Debug.Log("Wait2-0  " + a);
             yield return new WaitUntil(() => transform.position == points[a]);
             //Debug.Log("Wait2-1  " + a);
-            string owner;
-            if (owner_Ball == Owners.player0) owner = "player1";
-            else                              owner = "player0";
 
-            if (PhotonNetwork.IsMasterClient) photonView.RPC(nameof(W), RpcTarget.All, "Reflect", owner, "Idle", points[a - 1], normals[a]);
+            if (owner_Ball == Owners.player0)
+                if (PhotonNetwork.IsMasterClient)
+                    photonView.RPC(nameof(W), RpcTarget.All, "Idle", "player1", "Idle", points[a - 1], normals[a], Vector3.zero);
+            else
+                if (!PhotonNetwork.IsMasterClient)
+                    photonView.RPC(nameof(W), RpcTarget.All, "Idle", "player0", "Idle", points[a - 1], normals[a], Vector3.zero);            
         }
     }
-    [PunRPC]
-    private void W(string moveState, string owner_Ball, string toPlayerState, Vector3 lastPoint, Vector3 lastNormal)
-    {
-        Debug.Log("W");
-        Enum.TryParse(moveState, out MoveState M); Debug.Log(M);
-        Enum.TryParse(owner_Ball, out Owners O); Debug.Log(O);
-        Enum.TryParse(toPlayerState, out ToPlayerState T); Debug.Log(T);
-        this.moveState = M;
-        this.owner_Ball = O;
-        this.toPlayerState = T;
-        this.lastPoint = lastPoint;  //前の最後
-        this.lastNormal = lastNormal;  //前の法線
-    }
+  
 
     private void Move()
     {
@@ -444,35 +434,46 @@ public class Ball : MonoBehaviourPunCallbacks
         //}
 
         Debug.Log("ラケット" + name_ReflectorObject);
-        string strike;
-        string owner;
-        if (name_ReflectorObject == "Racket0")
-        {
-            strike = "StruckByPlayer0";
-            owner = "player1";
-            if (!PhotonNetwork.IsMasterClient) photonView.RPC(nameof(R), RpcTarget.All, strike, owner, "Idle", hitInfo.normal);
-        }
+        if (owner_Ball == Owners.player0)
+            if (PhotonNetwork.IsMasterClient) 
+                photonView.RPC(nameof(W), RpcTarget.All, "StruckByPlayer0", "player1", "Idle", Vector3.zero, Vector3.zero, hitInfo.normal);
         else
-        {
-            strike = "StruckByPlayer1";
-            owner = "player0";
-            if (PhotonNetwork.IsMasterClient) photonView.RPC(nameof(R), RpcTarget.All, strike, owner, "Idle", hitInfo.normal);
-        }
+            if (!PhotonNetwork.IsMasterClient) 
+                photonView.RPC(nameof(W), RpcTarget.All, "StruckByPlayer1", "player0", "Idle", Vector3.zero, Vector3.zero, hitInfo.normal);
     }
 
     [PunRPC]
-    private void R(string strikeState, string owner_Ball,string toPlayerState, Vector3 struckDirection)
+    private void R(string strikeState, string owner_Ball, string toPlayerState, Vector3 lastPoint, Vector3 lastNormal, Vector3 struckDirection)
     {
         Debug.Log("ラケット RPC");
         Enum.TryParse(strikeState, out StrikeState S); Debug.Log(S);
+        this.strikeState = S;
+        this.struckDirection = struckDirection;
+
         Enum.TryParse(owner_Ball, out Owners O); Debug.Log(O);
         Enum.TryParse(toPlayerState, out ToPlayerState T); Debug.Log(T);
+        this.owner_Ball = O;
+        this.toPlayerState = T;
+
+
+        StartCoroutine(Reversal());
+    }
+    [PunRPC]
+    private void W(string strikeState, string owner_Ball, string toPlayerState, Vector3 lastPoint, Vector3 lastNormal, Vector3 struckDirection)
+    {
+        Debug.Log("W");
+        Enum.TryParse(strikeState, out StrikeState S); Debug.Log(S);
+        Enum.TryParse(owner_Ball, out Owners O); Debug.Log(O);
+        Enum.TryParse(toPlayerState, out ToPlayerState T); Debug.Log(T);
+
         this.strikeState = S;
         this.owner_Ball = O;
         this.toPlayerState = T;
 
+        this.lastPoint = lastPoint;  //前の最後
+        this.lastNormal = lastNormal;  //前の法線
         this.struckDirection = struckDirection;
-
+        
         StartCoroutine(Reversal());
     }
 
