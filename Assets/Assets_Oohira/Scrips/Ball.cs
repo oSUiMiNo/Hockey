@@ -132,7 +132,6 @@ public class Ball : MonoBehaviourPunCallbacks
 
         Debug.Log("”½“]‚Ì‰Šú‰»0");
         yield return new WaitUntil(() => moveState == MoveState.Idle);
-        //if (PhotonNetwork.IsMasterClient) photonView.RPC(nameof(Reversal_1), RpcTarget.All);
 
         Debug.Log("”½“]‚Ì‰Šú‰»1");
         for (int a = 1; a < passingPointsVolume; a++)
@@ -161,18 +160,6 @@ public class Ball : MonoBehaviourPunCallbacks
         StartCoroutine(Wait(0));
 
         moveState = MoveState.Idle;
-    }
-    [PunRPC]
-    private void Reversal_1()
-    {
-        for (int a = 1; a < passingPointsVolume; a++)
-        {
-            ProcessReflect_Middle(a);
-            StartCoroutine(Wait(a));
-        }
-        StartCoroutine(Wait(passingPointsVolume));
-
-        moveState = MoveState.Move;
     }
 
 
