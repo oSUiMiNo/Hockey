@@ -52,6 +52,9 @@ public class Ball : MonoBehaviourPunCallbacks
     [SerializeField] private Vector3 firstDirection;
     [SerializeField] private Vector3 struckDirection;
 
+    [SerializeField] private float reflectAngle;
+    [SerializeField] private Vector3 positiveZAxis;
+
     [SerializeField] float speed = 3;
     [SerializeField] float margin = 1;
 
@@ -174,9 +177,7 @@ public class Ball : MonoBehaviourPunCallbacks
 
     //}
 
-    [SerializeField] private float reflectAngle;
-    [SerializeField] private Vector3 positiveZAxis;
-
+   
     [PunRPC]
     private void Reversal_0(Vector3 point_0, Vector3 normal_0)
     {
