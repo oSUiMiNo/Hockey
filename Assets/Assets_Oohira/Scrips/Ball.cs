@@ -141,11 +141,11 @@ public class Ball : MonoBehaviourPunCallbacks
     {
         if (state != State.BothReady) îΩì]ÇµÇΩâÒêî++;
         Debug.Log("îΩì]ÇµÇΩâÒêî" + îΩì]ÇµÇΩâÒêî);
-
+        yield return new WaitForSeconds(0);
         if (PhotonNetwork.IsMasterClient) photonView.RPC(nameof(Reversal_0), RpcTarget.All, transform.position + lastNormal * margin, lastNormal);
 
-        yield return new WaitUntil(() => moveState == MoveState.Idle);
-        if (PhotonNetwork.IsMasterClient) photonView.RPC(nameof(Reversal_1), RpcTarget.All);
+        //yield return new WaitUntil(() => moveState == MoveState.Idle);
+        //if (PhotonNetwork.IsMasterClient) photonView.RPC(nameof(Reversal_1), RpcTarget.All);
     }
    
     [PunRPC]
@@ -179,6 +179,19 @@ public class Ball : MonoBehaviourPunCallbacks
         else passingPointsVolume = 1;
 
         moveState = MoveState.Idle;
+
+        Debug.Log("îΩì]ÇÃèâä˙âª2");
+        for (int a = 1; a < passingPointsVolume; a++)
+        {
+            ProcessReflect_Middle(a);
+        }
+        for (int a = 1; a < passingPointsVolume + 1; a++)
+        {
+            StartCoroutine(Wait(a));
+        }
+        //StartCoroutine(Wait(passingPointsVolume));
+        Debug.Log("îΩì]ÇÃèâä˙âª3");
+        moveState = MoveState.Move;
 
     }
     [PunRPC]
@@ -442,22 +455,7 @@ public class Ball : MonoBehaviourPunCallbacks
                 photonView.RPC(nameof(W), RpcTarget.All, "StruckByPlayer1", "player0", "Idle", Vector3.zero, Vector3.zero, hitInfo.normal);
     }
 
-    [PunRPC]
-    private void R(string strikeState, string owner_Ball, string toPlayerState, Vector3 lastPoint, Vector3 lastNormal, Vector3 struckDirection)
-    {
-        Debug.Log("ÉâÉPÉbÉg RPC");
-        Enum.TryParse(strikeState, out StrikeState S); Debug.Log(S);
-        this.strikeState = S;
-        this.struckDirection = struckDirection;
 
-        Enum.TryParse(owner_Ball, out Owners O); Debug.Log(O);
-        Enum.TryParse(toPlayerState, out ToPlayerState T); Debug.Log(T);
-        this.owner_Ball = O;
-        this.toPlayerState = T;
-
-
-        StartCoroutine(Reversal());
-    }
     [PunRPC]
     private void W(string strikeState, string owner_Ball, string toPlayerState, Vector3 lastPoint, Vector3 lastNormal, Vector3 struckDirection)
     {
