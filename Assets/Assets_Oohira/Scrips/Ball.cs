@@ -78,6 +78,7 @@ public class Ball : MonoBehaviourPunCallbacks
         state = State.Wait;
         yield return new WaitUntil(() => RoomDoorWay.instance.Ready());
         //yield return new WaitForSeconds(1);
+        yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.S));
 
         line0 = GameObject.Find("Lines_Player0");
         line1 = GameObject.Find("Lines_Player1");
@@ -384,8 +385,6 @@ public class Ball : MonoBehaviourPunCallbacks
         //    ProcessReflect_Middle(a);
         //    StartCoroutine(Wait(a));
         //}
-        //if(PhotonNetwork.IsMasterClient) photonView.RPC(nameof(R), RpcTarget.All, transform.position, hitInfo.normal, name_ReflectorObject);
-        //R(transform.position, hitInfo.normal, name_ReflectorObject);
 
         string strike;
         string owner;
@@ -399,11 +398,11 @@ public class Ball : MonoBehaviourPunCallbacks
             strike = "StruckByPlayer1";
             owner = "player0";
         }
-        if (PhotonNetwork.IsMasterClient) photonView.RPC(nameof(RR), RpcTarget.All, strike, owner, "Idle", hitInfo.normal);
+        if (PhotonNetwork.IsMasterClient) photonView.RPC(nameof(R), RpcTarget.All, strike, owner, "Idle", hitInfo.normal);
     }
 
     [PunRPC]
-    private void RR(string strikeState, string owner_Ball,string toPlayerState, Vector3 struckDirection)
+    private void R(string strikeState, string owner_Ball,string toPlayerState, Vector3 struckDirection)
     {
         Enum.TryParse(strikeState, out StrikeState S); Debug.Log(S);
         Enum.TryParse(owner_Ball, out Owners O); Debug.Log(O);
@@ -418,27 +417,6 @@ public class Ball : MonoBehaviourPunCallbacks
     }
 
 
-
-    private void R(Vector3 position, Vector3 struckDirection, string name_ReflectorObject)
-    {
-
-        //反転の入口***********************************
-        toPlayerState = ToPlayerState.Idle;
-        this.struckDirection = struckDirection;
-
-        if (name_ReflectorObject == "Racket0")
-        {
-            strikeState = StrikeState.StruckByPlayer0;
-            owner_Ball = Owners.player1; Debug.Log("オーナーチェンジ0  ラケット");
-        }
-        else
-        {
-            strikeState = StrikeState.StruckByPlayer1;
-            owner_Ball = Owners.player0; Debug.Log("オーナーチェンジ1  ラケット");
-        }
-        
-        StartCoroutine(Reversal());
-    }
 
     [SerializeField] GameObject[] targets_Array = null;
     [SerializeField] List<GameObject> targets_List = null;
