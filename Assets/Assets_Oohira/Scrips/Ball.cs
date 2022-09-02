@@ -132,6 +132,7 @@ public class Ball : MonoBehaviourPunCallbacks
 
         Debug.Log("”½“]‚Ì‰Šú‰»0");
         yield return new WaitUntil(() => moveState == MoveState.Idle);
+        yield return new WaitForSeconds(1f);
 
         Debug.Log("”½“]‚Ì‰Šú‰»1");
         for (int a = 1; a < passingPointsVolume; a++)
@@ -289,7 +290,7 @@ public class Ball : MonoBehaviourPunCallbacks
 
     private void Move()
     {
-        Debug.Log("Move");
+        //Debug.Log("Move");
         Vector3 goal;
         if (count < passingPointsVolume + 1)
         {
