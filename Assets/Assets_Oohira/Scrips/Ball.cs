@@ -64,8 +64,11 @@ public class Ball : MonoBehaviourPunCallbacks
     [SerializeField] int divisionPointsVolume;
     [SerializeField] int passingPointsVolume = 0;
     [SerializeField] int count = 0;
-    [SerializeField] private Vector3[] points;
-    [SerializeField] private Vector3[] normals;
+    
+    //[SerializeField] private Vector3[] points;
+    //[SerializeField] private Vector3[] normals;
+    [SerializeField] private List<Vector3> points = new List<Vector3>();
+    [SerializeField] private List<Vector3> normals = new List<Vector3>();
 
     [SerializeField] private Vector3 lastPoint;
     [SerializeField] private Vector3 lastNormal;
@@ -141,45 +144,58 @@ public class Ball : MonoBehaviourPunCallbacks
         yield return new WaitUntil(() => moveState == MoveState.Idle);
         if (PhotonNetwork.IsMasterClient) photonView.RPC(nameof(Reversal_1), RpcTarget.All);
         Debug.Log("îΩì]ÇÃèâä˙âª1");
-
-     
-        //Debug.Log("îΩì]ÇÃèâä˙âª1");
-        //for (int a = 1; a < passingPointsVolume; a++)
-        //{
-        //    ProcessReflect_Middle(a);
-        //    StartCoroutine(Wait(a));
-        //}
-        //StartCoroutine(Wait(passingPointsVolume));
-        //Debug.Log("îΩì]ÇÃèâä˙âª2");
-        //moveState = MoveState.Move;
-        //Debug.Log("îΩì]ÇÃèâä˙âª3");
     }
 
+    //[PunRPC]
+    //private void Reversal_0(Vector3 point_0, Vector3 normal_0)
+    //{
+    //    transform.position = point_0;
+
+    //    count = 0;
+        
+    //    points = new Vector3[passingPointsVolume + 1];
+    //    normals = new Vector3[passingPointsVolume + 1];
+    //    points[0] = point_0;
+    //    normals[0] = normal_0;
+    //    ProcessReflect_Middle(0);
+    //    StartCoroutine(Wait(0));
+    //    float reflectAngle = Vector3.Angle(new Vector3(0, 0, 1), outDirection);
+    //    if (reflectAngle <= 70)      passingPointsVolume = 8;
+    //    else if (reflectAngle <= 60) passingPointsVolume = 7;
+    //    else if (reflectAngle <= 50) passingPointsVolume = 6;
+    //    else if (reflectAngle <= 40) passingPointsVolume = 5;
+    //    else if (reflectAngle <= 30) passingPointsVolume = 4;
+    //    else if (reflectAngle <= 20) passingPointsVolume = 3;
+    //    else                         passingPointsVolume = 2;
+    //    points = new Vector3[passingPointsVolume + 1];
+    //    normals = new Vector3[passingPointsVolume + 1];
+    //    points[0] = point_0;
+    //    normals[0] = normal_0;
+
+    //    moveState = MoveState.Idle;
+
+    //}
     [PunRPC]
     private void Reversal_0(Vector3 point_0, Vector3 normal_0)
     {
         transform.position = point_0;
 
         count = 0;
-        
-        points = new Vector3[passingPointsVolume + 1];
-        normals = new Vector3[passingPointsVolume + 1];
-        points[0] = point_0;
-        normals[0] = normal_0;
+        points.Clear();
+        normals.Clear();
+
+        points.Add(point_0);
+        normals.Add(normal_0);
         ProcessReflect_Middle(0);
         StartCoroutine(Wait(0));
         float reflectAngle = Vector3.Angle(new Vector3(0, 0, 1), outDirection);
-        if (reflectAngle <= 70)      passingPointsVolume = 8;
+        if (reflectAngle <= 70) passingPointsVolume = 8;
         else if (reflectAngle <= 60) passingPointsVolume = 7;
         else if (reflectAngle <= 50) passingPointsVolume = 6;
         else if (reflectAngle <= 40) passingPointsVolume = 5;
         else if (reflectAngle <= 30) passingPointsVolume = 4;
         else if (reflectAngle <= 20) passingPointsVolume = 3;
-        else                         passingPointsVolume = 2;
-        points = new Vector3[passingPointsVolume + 1];
-        normals = new Vector3[passingPointsVolume + 1];
-        points[0] = point_0;
-        normals[0] = normal_0;
+        else passingPointsVolume = 2;
 
         moveState = MoveState.Idle;
 
@@ -258,8 +274,10 @@ public class Ball : MonoBehaviourPunCallbacks
         Debug.DrawRay(points[a], outDirection * 5, Color.green, 2f, false);
         Instantiate(sphereCast, hitInfo.point + hitInfo.normal * margin, Quaternion.identity);
         //if (a + 1 < points.Length) Debug.Log("éüÇÃÉCÉìÉfÉbÉNÉX  " + (a + 1));
-        if (a + 1 < points.Length) points[a + 1] = hitInfo.point + hitInfo.normal * margin;
-        if (a + 1 < normals.Length) normals[a + 1] = hitInfo.normal;
+        //if (a + 1 < points.Length) points[a + 1] = hitInfo.point + hitInfo.normal * margin;
+        //if (a + 1 < normals.Length) normals[a + 1] = hitInfo.normal;
+        if (a + 1 < passingPointsVolume + 1) points.Add(hitInfo.point + hitInfo.normal * margin);
+        if (a + 1 < passingPointsVolume + 1) normals.Add(hitInfo.normal);
     }
     private IEnumerator Wait(int a)
     {
