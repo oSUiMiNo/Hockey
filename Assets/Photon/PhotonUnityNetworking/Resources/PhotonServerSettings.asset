@@ -49,6 +49,11 @@ MonoBehaviour:
   - AddThis
   - BallPos
   - R
+  - P1
+  - P2
+  - W
+  - P3
+  - Reversal_0
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

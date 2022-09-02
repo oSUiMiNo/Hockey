@@ -5,6 +5,8 @@ using System.Linq;
 using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
+using System;
+
 public class Ball : MonoBehaviourPunCallbacks
 {
     private enum State
@@ -70,19 +72,19 @@ public class Ball : MonoBehaviourPunCallbacks
     }
     private IEnumerator Init()
     {
-        Random.InitState(System.DateTime.Now.Millisecond);
+        UnityEngine.Random.InitState(System.DateTime.Now.Millisecond);
         moveState = MoveState.First;
 
         state = State.Wait;
-        yield return new WaitUntil(() => RoomDoorWay.instance.Ready());
-        //yield return new WaitForSeconds(1);
+        //yield return new WaitUntil(() => RoomDoorWay.instance.Ready());
+        yield return new WaitForSeconds(1);
 
         line0 = GameObject.Find("Lines_Player0");
         line1 = GameObject.Find("Lines_Player1");
         racket0 = GameObject.Find("Racket0");
         racket1 = GameObject.Find("Racket1");
         rb = GetComponent<Rigidbody>();
-        randomNumber = Random.Range(-3, 3);
+        randomNumber = UnityEngine.Random.Range(-3, 3);
 
         StartCoroutine(Reversal());
 
@@ -106,10 +108,11 @@ public class Ball : MonoBehaviourPunCallbacks
         //normals = new Vector3[passingPointsVolume + 1];
         //points[0] = transform.position + lastNormal * margin;
         //normals[0] = lastNormal;
-        if(PhotonNetwork.IsMasterClient)
-            photonView.RPC(nameof(Reversal_0), RpcTarget.All, transform.position + lastNormal * margin, lastNormal);
+        //if(PhotonNetwork.IsMasterClient) photonView.RPC(nameof(Reversal_0), RpcTarget.All, transform.position + lastNormal * margin, lastNormal);
+        Reversal_0(transform.position + lastNormal * margin, lastNormal);
 
-        yield return new WaitForSeconds(3);
+        yield return new WaitUntil(() => moveState == MoveState.Idle);
+        //yield return new WaitForSeconds(0);
         for (int a = 1; a < passingPointsVolume; a++)
         {
             ProcessReflect_Middle(a);
@@ -120,7 +123,7 @@ public class Ball : MonoBehaviourPunCallbacks
         moveState = MoveState.Move;
     }
 
-    [PunRPC]
+    //[PunRPC]
     private void Reversal_0(Vector3 point_0, Vector3 normal_0)
     {
         transform.position = point_0;
@@ -165,27 +168,7 @@ public class Ball : MonoBehaviourPunCallbacks
     //    Vector3 inDirection = (points[0] - lastPoint).normalized;
     //    outDirection = (OutDestination_General(inDirection, normals[0]) - points[0]).normalized;
     //}
-    [PunRPC]
-    private void W(Vector3 position, int a)
-    {
-        transform.position = position;
-
-        //反転の入口***********************************
-        lastPoint = points[a - 1];
-        lastNormal = normals[a];
-        Debug.Log("前の最後  " + lastPoint);
-        Debug.Log("前の法線  " + lastNormal);
-        if (owner_Ball == Owners.player0)
-        {
-            owner_Ball = Owners.player1; //Debug.Log("オーナーチェンジ0  Wait");
-        }
-        else if (owner_Ball == Owners.player1)
-        {
-            owner_Ball = Owners.player0; //Debug.Log("オーナーチェンジ1  Wait");
-        }
-        toPlayerState = ToPlayerState.Idle;
-        moveState = MoveState.Reflect;
-    }
+   
 
     Vector3 outDirection = Vector3.zero;
     private void ProcessReflect_Middle(int a)
@@ -197,25 +180,27 @@ public class Ball : MonoBehaviourPunCallbacks
         {
             if (moveState == MoveState.First)            //ゲーム開始後の一番最初
             {
-                //Debug.Log("First  " + a);
+                Debug.Log("First  " + a);
                 //反転の入口***********************************
-                //moveState = MoveState.Move;
+                moveState = MoveState.Idle;
                 outDirection = firstDirection.normalized;
                 //if (PhotonNetwork.IsMasterClient) photonView.RPC(nameof(P1), RpcTarget.All, transform.position, a);
             }
             else if (strikeState != StrikeState.Idle)    //ラケットで打たれた直後
             {
-                //Debug.Log("Middle0  " + a);
+                Debug.Log("Middle0  " + a);
                 //反転の入口***********************************
+                moveState = MoveState.Idle;
                 outDirection = struckDirection.normalized;
                 //if (PhotonNetwork.IsMasterClient) photonView.RPC(nameof(P2), RpcTarget.All, points[a], a);
             }
             else                                         //それ以外
             {
-                //Debug.Log("Middle1  " + a);
+                Debug.Log("Middle1  " + a);
                 if (a == 0)                   //aが0の最初のループ
                 {
                     //反転の入口***********************************
+                    moveState = MoveState.Idle;
                     Vector3 inDirection = (points[0] - lastPoint).normalized;
                     outDirection = (OutDestination_General(inDirection, normals[0]) - points[0]).normalized;
                     //if (PhotonNetwork.IsMasterClient) photonView.RPC(nameof(P3), RpcTarget.All, points[a], a);
@@ -239,13 +224,13 @@ public class Ball : MonoBehaviourPunCallbacks
         }
         else if (a == passingPointsVolume - 1)                      //最後のカウントの時
         {
-            //Debug.Log("Final  " + a);
+            Debug.Log("Final  " + a);
             outDirection = (GetPlayerTargetPosition() - points[a]).normalized;
             rayColor = Color.blue;
         }
-        //Debug.Log("レイ飛ばす方向  " + outDirection + ", レイの原点  " + points[a]);
+        Debug.Log("レイ飛ばす方向  " + outDirection + ", レイの原点  " + points[a]);
         Physics.SphereCast(points[a], radius, outDirection, out hitInfo, 10000f, layerMask_Wall);
-        //Debug.Log("レイ当たった場所  " + hitInfo.point + ", レイの長さ  " + hitInfo.distance);
+        Debug.Log("レイ当たった場所  " + hitInfo.point + ", レイの長さ  " + hitInfo.distance);
         Debug.DrawRay(points[a], outDirection * hitInfo.distance, rayColor, 8f, false);
         Debug.DrawRay(points[a], outDirection * 5, Color.green, 2f, false);
         //Instantiate(sphereCast, hitInfo.point + hitInfo.normal * margin, Quaternion.identity);
@@ -292,9 +277,24 @@ public class Ball : MonoBehaviourPunCallbacks
             //}
             //toPlayerState = ToPlayerState.Idle;
             //moveState = MoveState.Reflect;
-            if (PhotonNetwork.IsMasterClient) photonView.RPC(nameof(W), RpcTarget.All, transform.position, a);
+            Debug.Log("Wへ");
+            if (PhotonNetwork.IsMasterClient) photonView.RPC(nameof(W), RpcTarget.All, "Reflect", "player1", "Idle", points[a - 1], normals[a]);
         }
     }
+    [PunRPC]
+    private void W(string moveState, string owner_Ball, string toPlayerState, Vector3 lastPoint, Vector3 lastNormal)
+    {
+        Debug.Log("W");
+        Enum.TryParse(moveState, out MoveState M); Debug.Log(M);
+        Enum.TryParse(owner_Ball, out Owners O); Debug.Log(O);
+        Enum.TryParse(toPlayerState, out ToPlayerState T); Debug.Log(T);
+        this.moveState = M;
+        this.owner_Ball = O;
+        this.toPlayerState = T;
+        this.lastPoint = lastPoint;
+        this.lastNormal = lastNormal;
+    }
+
     private void Move()
     {
         Debug.Log("Move");
@@ -458,7 +458,7 @@ public class Ball : MonoBehaviourPunCallbacks
             }
         }
 
-        int index_Random = Random.Range(0, targets_List.Count);
+        int index_Random = UnityEngine.Random.Range(0, targets_List.Count);
         Vector3 targetPosition_Random = targets_List[index_Random].transform.position;
 
         targets_List.Clear();
