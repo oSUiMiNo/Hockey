@@ -151,9 +151,6 @@ public class Ball : MonoBehaviourPunCallbacks
     [PunRPC]
     private void Reversal_0(Vector3 point_0, Vector3 normal_0)
     {
-        if (state != State.BothReady) ”½“]‚µ‚½‰ñ”++;
-        Debug.Log("”½“]‚µ‚½‰ñ”" + ”½“]‚µ‚½‰ñ”);
-
         transform.position = point_0;
 
         Debug.Log("”½“]‚Ì‰Šú‰»0");
@@ -197,74 +194,22 @@ public class Ball : MonoBehaviourPunCallbacks
         moveState = MoveState.Move;
 
     }
-
     [PunRPC]
-    private void W(string strikeState, string owner_Ball, Vector3 lastPoint, Vector3 lastNormal, Vector3 struckDirection)
+    private void Reversal_1()
     {
-        toPlayerState = ToPlayerState.Idle;
-
-        Debug.Log("WWW2");
-        Enum.TryParse(strikeState, out StrikeState S); Debug.Log(S);
-        Enum.TryParse(owner_Ball, out Owners O); Debug.Log(O);
-
-        this.strikeState = S;
-        this.owner_Ball = O;
-
-        this.lastPoint = lastPoint;  //‘O‚ÌÅŒã
-        this.lastNormal = lastNormal;  //‘O‚Ì–@ü
-        this.struckDirection = struckDirection;
-
-        StartCoroutine(Reversal());
-
-        //Vector3 point_0 = transform.position + this.lastNormal * margin;
-        //Vector3 normal_0 = this.lastNormal;
-
-        //if (state != State.BothReady) ”½“]‚µ‚½‰ñ”++;
-        //Debug.Log("”½“]‚µ‚½‰ñ”" + ”½“]‚µ‚½‰ñ”);
-
-        //transform.position = point_0;
-
-        //Debug.Log("”½“]‚Ì‰Šú‰»0");
-        //count = 0;
-        //points.Clear();
-        //normals.Clear();
-        //Debug.Log("”½“]‚Ì‰Šú‰»1");
-        //Debug.Log(points.Count);
-
-        //points.Add(point_0);
-        //normals.Add(normal_0);
-        //ProcessReflect_Middle(0);
-        //StartCoroutine(Wait(0));
-
-        //if (this.owner_Ball == Owners.player0) positiveZAxis.z = -1;
-        //else                                   positiveZAxis.z = 1;
-
-        //reflectAngle = Vector3.Angle(positiveZAxis, outDirection);
-        //if (reflectAngle >= 70)      passingPointsVolume = 8;
-        //else if (reflectAngle >= 60) passingPointsVolume = 7;
-        //else if (reflectAngle >= 50) passingPointsVolume = 6;
-        //else if (reflectAngle >= 40) passingPointsVolume = 5;
-        //else if (reflectAngle >= 30) passingPointsVolume = 4;
-        //else if (reflectAngle >= 20) passingPointsVolume = 3;
-        //else if (reflectAngle >= 9)  passingPointsVolume = 2;
-        //else                         passingPointsVolume = 1;
-
-        //moveState = MoveState.Idle;
-
-        //Debug.Log("”½“]‚Ì‰Šú‰»2");
-        //for (int a = 1; a < passingPointsVolume; a++)
-        //{
-        //    ProcessReflect_Middle(a);
-        //}
-        //for (int a = 1; a < passingPointsVolume + 1; a++)
-        //{
-        //    StartCoroutine(Wait(a));
-        //}
-        ////StartCoroutine(Wait(passingPointsVolume));
-        //Debug.Log("”½“]‚Ì‰Šú‰»3");
-        //moveState = MoveState.Move;
+        Debug.Log("”½“]‚Ì‰Šú‰»2");
+        for (int a = 1; a < passingPointsVolume; a++)
+        {
+            ProcessReflect_Middle(a);
+        }
+        for (int a = 1; a < passingPointsVolume + 1; a++)
+        {
+            StartCoroutine(Wait(a));
+        }
+        //StartCoroutine(Wait(passingPointsVolume));
+        Debug.Log("”½“]‚Ì‰Šú‰»3");
+        moveState = MoveState.Move;
     }
-    
 
 
         Vector3 outDirection = Vector3.zero;
@@ -530,6 +475,28 @@ public class Ball : MonoBehaviourPunCallbacks
     }
 
     
+
+    [PunRPC]
+    private void W(string strikeState, string owner_Ball,  Vector3 lastPoint, Vector3 lastNormal, Vector3 struckDirection)
+    {
+        toPlayerState = ToPlayerState.Idle;
+
+        Debug.Log("WWW2");
+        Enum.TryParse(strikeState, out StrikeState S); Debug.Log(S);
+        Enum.TryParse(owner_Ball, out Owners O); Debug.Log(O);
+
+        this.strikeState = S;
+        this.owner_Ball = O;
+
+        this.lastPoint = lastPoint;  //‘O‚ÌÅŒã
+        this.lastNormal = lastNormal;  //‘O‚Ì–@ü
+        this.struckDirection = struckDirection;
+        
+        StartCoroutine(Reversal());
+    }
+
+
+
     [SerializeField] GameObject[] targets_Array = null;
     [SerializeField] List<GameObject> targets_List = null;
     public Vector3 GetPlayerTargetPosition()
