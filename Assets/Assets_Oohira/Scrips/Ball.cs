@@ -306,7 +306,7 @@ public class Ball : MonoBehaviourPunCallbacks
                 if (PhotonNetwork.IsMasterClient)
                 {
                     Debug.Log("WWWWWW0");
-                    photonView.RPC(nameof(W), RpcTarget.All, "Idle", "player1", "Idle", points[a - 1], normals[a], Vector3.zero);
+                    photonView.RPC(nameof(W), RpcTarget.All, "Idle", "player1", points[a - 1], normals[a], Vector3.zero);
                 }
             }
             if(toPlayerState == ToPlayerState.ToPlayer1)
@@ -314,7 +314,7 @@ public class Ball : MonoBehaviourPunCallbacks
                 if (!PhotonNetwork.IsMasterClient)
                 {
                     Debug.Log("WWWWWW1");
-                    photonView.RPC(nameof(W), RpcTarget.All, "Idle", "player0", "Idle", points[a - 1], normals[a], Vector3.zero);
+                    photonView.RPC(nameof(W), RpcTarget.All, "Idle", "player0", points[a - 1], normals[a], Vector3.zero);
                 }
             }
         }
