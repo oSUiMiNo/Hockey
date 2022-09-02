@@ -103,15 +103,17 @@ public class Ball : MonoBehaviourPunCallbacks
     private IEnumerator ConfirmPreparation()
     {
         yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Z));
-        photonView.RPC(nameof(BothReady), RpcTarget.All);
+        if(PhotonNetwork.IsMasterClient) photonView.RPC(nameof(BothReady), RpcTarget.All, "player1");
+        else                             photonView.RPC(nameof(BothReady), RpcTarget.All, "player0");
+
+        yield return new WaitUntil(() => player0Ready && player1Ready);
+        state = State.BothReady;
     }
     [PunRPC]
-    private void BothReady()
+    private void BothReady(string player)
     {
-        if (PhotonNetwork.IsMasterClient) player1Ready = true;
-        else                              player0Ready = true;
-
-        if (player0Ready && player1Ready) state = State.BothReady;
+        if (player == "player1") player1Ready = true;
+        else                     player0Ready = true;
     }
 
 
