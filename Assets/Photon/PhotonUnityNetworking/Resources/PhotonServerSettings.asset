@@ -58,6 +58,7 @@ MonoBehaviour:
   - BothReady
   - Player1Ready
   - Reversal_1
+  - Bo
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
