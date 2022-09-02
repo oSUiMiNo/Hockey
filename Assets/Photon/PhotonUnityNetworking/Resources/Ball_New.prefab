@@ -86,6 +86,8 @@ MonoBehaviour:
   lastNormal: {x: 0, y: 0, z: 0}
   player0Ready: 0
   player1Ready: 0
+  a: 0
+  b: 0
   layerMask_Wall:
     serializedVersion: 2
     m_Bits: 1024
