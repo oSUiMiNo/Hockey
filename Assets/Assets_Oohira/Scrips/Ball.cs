@@ -80,8 +80,10 @@ public class Ball : MonoBehaviourPunCallbacks
 
         state = State.Wait;
         yield return new WaitUntil(() => RoomDoorWay.instance.Ready());
+        StartCoroutine(ConfirmPreparation());
+        yield return new WaitUntil(() => state == State.BothReady);
         //yield return new WaitForSeconds(1);
-        yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.S));
+
 
         line0 = GameObject.Find("Lines_Player0");
         line1 = GameObject.Find("Lines_Player1");
@@ -98,19 +100,24 @@ public class Ball : MonoBehaviourPunCallbacks
 
     [SerializeField] private bool player0Ready = false;
     [SerializeField] private bool player1Ready = false;
-    private bool ConfirmPreparation()
+    private IEnumerator ConfirmPreparation()
     {
-        if (PhotonNetwork.IsMasterClient && Input.GetKeyDown(KeyCode.Z))  player1Ready = true;
-        if (!PhotonNetwork.IsMasterClient && Input.GetKeyDown(KeyCode.Z)) player0Ready = true;
-        
-        if (player0Ready && player1Ready) return true;
-        else                              return false;
+        yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Z));
+        photonView.RPC(nameof(BothReady), RpcTarget.All);
     }
+    [PunRPC]
+    private void BothReady()
+    {
+        if (PhotonNetwork.IsMasterClient) player1Ready = true;
+        else                              player0Ready = true;
+
+        if (player0Ready && player1Ready) state = State.BothReady;
+    }
+
 
     private void FixedUpdate()
     {
         if (state != State.Ready) return;
-        if (!ConfirmPreparation()) return;
         if (moveState == MoveState.Reflect) StartCoroutine(Reversal());
         if (moveState == MoveState.Move) Move();
         if (toPlayerState != ToPlayerState.Idle) Process();
