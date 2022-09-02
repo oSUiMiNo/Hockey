@@ -330,7 +330,7 @@ public class Ball : MonoBehaviourPunCallbacks
         {
             //Debug.Log("Move  " + count);
             goal = points[count];
-            this.transform.DOMove(goal, 2f).SetEase(Ease.Linear);
+            this.transform.DOMove(goal, 0.5f).SetEase(Ease.Linear);
         }
     }
 
