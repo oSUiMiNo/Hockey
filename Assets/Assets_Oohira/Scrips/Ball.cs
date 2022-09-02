@@ -62,7 +62,7 @@ public class Ball : MonoBehaviourPunCallbacks
     [SerializeField] GameObject line1;
     [SerializeField] float distance_Z;
     [SerializeField] int divisionPointsVolume;
-    [SerializeField] int passingPointsVolume = 5;
+    [SerializeField] int passingPointsVolume = 0;
     [SerializeField] int count = 0;
     [SerializeField] private Vector3[] points;
     [SerializeField] private Vector3[] normals;
@@ -91,6 +91,8 @@ public class Ball : MonoBehaviourPunCallbacks
         line1 = GameObject.Find("Lines_Player1");
         racket0 = GameObject.Find("Racket0");
         racket1 = GameObject.Find("Racket1");
+        passingPointsVolume = 2;
+
         sphereCast = GameObject.Find("Sphere");
         rb = GetComponent<Rigidbody>();
         randomNumber = UnityEngine.Random.Range(-3, 3);
@@ -159,16 +161,25 @@ public class Ball : MonoBehaviourPunCallbacks
         transform.position = point_0;
 
         count = 0;
+        
         points = new Vector3[passingPointsVolume + 1];
         normals = new Vector3[passingPointsVolume + 1];
         points[0] = point_0;
         normals[0] = normal_0;
-
         ProcessReflect_Middle(0);
         StartCoroutine(Wait(0));
-
-        //if (PhotonNetwork.IsMasterClient) photonView.RPC(nameof(Bo), RpcTarget.All, "player1");
-        //else                              photonView.RPC(nameof(Bo), RpcTarget.All, "player0");
+        float reflectAngle = Vector3.Angle(new Vector3(0, 0, 1), outDirection);
+        if (reflectAngle <= 70)      passingPointsVolume = 8;
+        else if (reflectAngle <= 60) passingPointsVolume = 7;
+        else if (reflectAngle <= 50) passingPointsVolume = 6;
+        else if (reflectAngle <= 40) passingPointsVolume = 5;
+        else if (reflectAngle <= 30) passingPointsVolume = 4;
+        else if (reflectAngle <= 20) passingPointsVolume = 3;
+        else                         passingPointsVolume = 2;
+        points = new Vector3[passingPointsVolume + 1];
+        normals = new Vector3[passingPointsVolume + 1];
+        points[0] = point_0;
+        normals[0] = normal_0;
 
         moveState = MoveState.Idle;
 
