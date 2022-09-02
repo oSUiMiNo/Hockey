@@ -44,6 +44,8 @@ public class Ball : MonoBehaviourPunCallbacks
     public Owners owner_Ball;
 
 
+    [SerializeField] private float reflectAngle;
+    [SerializeField] private Vector3 positiveZAxis;
 
     Rigidbody rb;
     [SerializeField] bool visualizeSphereCast = false;
@@ -52,8 +54,6 @@ public class Ball : MonoBehaviourPunCallbacks
     [SerializeField] private Vector3 firstDirection;
     [SerializeField] private Vector3 struckDirection;
 
-    [SerializeField] private float reflectAngle;
-    [SerializeField] private Vector3 positiveZAxis;
 
     [SerializeField] float speed = 3;
     [SerializeField] float margin = 1;
@@ -205,7 +205,8 @@ public class Ball : MonoBehaviourPunCallbacks
         else if (reflectAngle >= 40) passingPointsVolume = 5;
         else if (reflectAngle >= 30) passingPointsVolume = 4;
         else if (reflectAngle >= 20) passingPointsVolume = 3;
-        else passingPointsVolume = 2;
+        else if (reflectAngle >= 9) passingPointsVolume = 2;
+        else passingPointsVolume = 1;
 
         moveState = MoveState.Idle;
 
