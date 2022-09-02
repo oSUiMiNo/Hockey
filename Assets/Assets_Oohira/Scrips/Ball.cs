@@ -301,12 +301,22 @@ public class Ball : MonoBehaviourPunCallbacks
             yield return new WaitUntil(() => transform.position == points[a]);
             //Debug.Log("Wait2-1  " + a);
 
-            if (owner_Ball == Owners.player0)
+            if (toPlayerState == ToPlayerState.ToPlayer0)
+            {
                 if (PhotonNetwork.IsMasterClient)
+                {
+                    Debug.Log("WWWWWW0");
                     photonView.RPC(nameof(W), RpcTarget.All, "Idle", "player1", "Idle", points[a - 1], normals[a], Vector3.zero);
-            else
+                }
+            }
+            if(toPlayerState == ToPlayerState.ToPlayer1)
+            {
                 if (!PhotonNetwork.IsMasterClient)
-                    photonView.RPC(nameof(W), RpcTarget.All, "Idle", "player0", "Idle", points[a - 1], normals[a], Vector3.zero);            
+                {
+                    Debug.Log("WWWWWW1");
+                    photonView.RPC(nameof(W), RpcTarget.All, "Idle", "player0", "Idle", points[a - 1], normals[a], Vector3.zero);
+                }
+            }
         }
     }
   
@@ -447,19 +457,28 @@ public class Ball : MonoBehaviourPunCallbacks
         //}
 
         Debug.Log("ƒ‰ƒPƒbƒg" + name_ReflectorObject);
-        if (owner_Ball == Owners.player0)
-            if (PhotonNetwork.IsMasterClient) 
+        if (toPlayerState == ToPlayerState.ToPlayer0)
+        {
+            if (PhotonNetwork.IsMasterClient)
+            {
+                Debug.Log("WWW0");
                 photonView.RPC(nameof(W), RpcTarget.All, "StruckByPlayer0", "player1", "Idle", Vector3.zero, Vector3.zero, hitInfo.normal);
-        else
-            if (!PhotonNetwork.IsMasterClient) 
+            }
+        }
+        if(toPlayerState == ToPlayerState.ToPlayer1)
+        {
+            if (!PhotonNetwork.IsMasterClient)
+            {
+                Debug.Log("WWW1");
                 photonView.RPC(nameof(W), RpcTarget.All, "StruckByPlayer1", "player0", "Idle", Vector3.zero, Vector3.zero, hitInfo.normal);
+            }
+        }
     }
-
 
     [PunRPC]
     private void W(string strikeState, string owner_Ball, string toPlayerState, Vector3 lastPoint, Vector3 lastNormal, Vector3 struckDirection)
     {
-        Debug.Log("W");
+        Debug.Log("WWW2");
         Enum.TryParse(strikeState, out StrikeState S); Debug.Log(S);
         Enum.TryParse(owner_Ball, out Owners O); Debug.Log(O);
         Enum.TryParse(toPlayerState, out ToPlayerState T); Debug.Log(T);
