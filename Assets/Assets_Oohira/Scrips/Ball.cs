@@ -335,12 +335,11 @@ public class Ball : MonoBehaviourPunCallbacks
 
     private void Move1()
     {
-        Vector3 goal;
         if (count < passingPointsVolume + 1)
         {
-            //Debug.Log("Move  " + count);
-            goal = points[count];
-            this.transform.DOMove(goal, 0.5f).SetEase(Ease.Linear);
+            float distance = (transform.position - points[count]).magnitude;
+            float time = distance / speed;
+            this.transform.DOMove(points[count], time).SetEase(Ease.Linear);
         }
     }
 
