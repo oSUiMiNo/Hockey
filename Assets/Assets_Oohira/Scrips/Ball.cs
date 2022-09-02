@@ -108,8 +108,8 @@ public class Ball : MonoBehaviourPunCallbacks
         //normals = new Vector3[passingPointsVolume + 1];
         //points[0] = transform.position + lastNormal * margin;
         //normals[0] = lastNormal;
-        //if(PhotonNetwork.IsMasterClient) photonView.RPC(nameof(Reversal_0), RpcTarget.All, transform.position + lastNormal * margin, lastNormal);
-        Reversal_0(transform.position + lastNormal * margin, lastNormal);
+        if(PhotonNetwork.IsMasterClient) photonView.RPC(nameof(Reversal_0), RpcTarget.All, transform.position + lastNormal * margin, lastNormal);
+        //Reversal_0(transform.position + lastNormal * margin, lastNormal);
 
         yield return new WaitUntil(() => moveState == MoveState.Idle);
         //yield return new WaitForSeconds(0);
