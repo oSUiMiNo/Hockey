@@ -431,6 +431,7 @@ public class Ball : MonoBehaviourPunCallbacks
         //    StartCoroutine(Wait(a));
         //}
 
+        Debug.Log("ラケット" + name_ReflectorObject);
         string strike;
         string owner;
         if (name_ReflectorObject == "Racket0")
@@ -449,6 +450,7 @@ public class Ball : MonoBehaviourPunCallbacks
     [PunRPC]
     private void R(string strikeState, string owner_Ball,string toPlayerState, Vector3 struckDirection)
     {
+        Debug.Log("ラケット RPC");
         Enum.TryParse(strikeState, out StrikeState S); Debug.Log(S);
         Enum.TryParse(owner_Ball, out Owners O); Debug.Log(O);
         Enum.TryParse(toPlayerState, out ToPlayerState T); Debug.Log(T);
