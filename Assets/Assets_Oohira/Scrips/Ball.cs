@@ -128,26 +128,24 @@ public class Ball : MonoBehaviourPunCallbacks
     private IEnumerator Reversal()
     {
         if(PhotonNetwork.IsMasterClient) photonView.RPC(nameof(Reversal_0), RpcTarget.All, transform.position + lastNormal * margin, lastNormal);
-        //Reversal_0(transform.position + lastNormal * margin, lastNormal);
 
-        yield return new WaitUntil(() => a && b);
-        a = false;
-        b = false;
-        moveState = MoveState.Idle;
+
 
         Debug.Log("”½“]‚Ì‰Šú‰»0");
         yield return new WaitUntil(() => moveState == MoveState.Idle);
-
+        if (PhotonNetwork.IsMasterClient) photonView.RPC(nameof(Reversal_1), RpcTarget.All);
         Debug.Log("”½“]‚Ì‰Šú‰»1");
-        for (int a = 1; a < passingPointsVolume; a++)
-        {
-            ProcessReflect_Middle(a);
-            StartCoroutine(Wait(a));
-        }
-        StartCoroutine(Wait(passingPointsVolume));
-        Debug.Log("”½“]‚Ì‰Šú‰»2");
-        moveState = MoveState.Move;
-        Debug.Log("”½“]‚Ì‰Šú‰»3");
+
+        //Debug.Log("”½“]‚Ì‰Šú‰»1");
+        //for (int a = 1; a < passingPointsVolume; a++)
+        //{
+        //    ProcessReflect_Middle(a);
+        //    StartCoroutine(Wait(a));
+        //}
+        //StartCoroutine(Wait(passingPointsVolume));
+        //Debug.Log("”½“]‚Ì‰Šú‰»2");
+        //moveState = MoveState.Move;
+        //Debug.Log("”½“]‚Ì‰Šú‰»3");
     }
 
     [SerializeField] bool a, b;
@@ -165,22 +163,28 @@ public class Ball : MonoBehaviourPunCallbacks
         ProcessReflect_Middle(0);
         StartCoroutine(Wait(0));
 
-        if (PhotonNetwork.IsMasterClient) photonView.RPC(nameof(Bo), RpcTarget.All, "player1");
-        else photonView.RPC(nameof(Bo), RpcTarget.All, "player0");
+        //if (PhotonNetwork.IsMasterClient) photonView.RPC(nameof(Bo), RpcTarget.All, "player1");
+        //else                              photonView.RPC(nameof(Bo), RpcTarget.All, "player0");
 
-       // moveState = MoveState.Idle;
+        moveState = MoveState.Idle;
 
     }
     [PunRPC]
-    private void Bo(string player)
+    private void Reversal_1()
     {
-        if (player == "player1") a = true;
-        else                     b = true;
+        Debug.Log("”½“]‚Ì‰Šú‰»2");
+        for (int a = 1; a < passingPointsVolume; a++)
+        {
+            ProcessReflect_Middle(a);
+            StartCoroutine(Wait(a));
+        }
+        StartCoroutine(Wait(passingPointsVolume));
+        Debug.Log("”½“]‚Ì‰Šú‰»3");
+        moveState = MoveState.Move;
     }
 
 
-
-    Vector3 outDirection = Vector3.zero;
+        Vector3 outDirection = Vector3.zero;
     private void ProcessReflect_Middle(int a)
     {
         Color rayColor = Color.white;
